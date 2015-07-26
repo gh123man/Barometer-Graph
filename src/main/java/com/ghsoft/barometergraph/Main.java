@@ -2,20 +2,20 @@ package com.ghsoft.barometergraph;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.ghsoft.barometergraph.fragments.LiveGraphFragment;
 import com.ghsoft.barometergraph.service.BarometerDataService;
 import com.ghsoft.barometergraph.service.BarometerServiceConnection;
 
 
-public class Main extends ActionBarActivity implements BarometerServiceConnection.BarometerServiceEvents {
+public class Main extends ActionBarActivity implements BarometerServiceConnection.BarometerServiceEvents, LiveGraphFragment.LiveGraphFragmentEvents {
 
 
     public static final String FRAGMENT_ID = "mContent";
@@ -34,7 +34,10 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         mFragmentManager = getFragmentManager();
         mServiceConnection = new BarometerServiceConnection(this);
         Intent intent = new Intent(this, BarometerDataService.class);
-        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        startService(intent);
+        bindService(intent, mServiceConnection, 0);
+        Log.e("BINDING", "BINDING");
+
 
         if (savedInstanceState != null) {
             mContent = mFragmentManager.getFragment(savedInstanceState, FRAGMENT_ID);
@@ -58,13 +61,16 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         unbindService(mServiceConnection);
+        super.onDestroy();
     }
 
     @Override
     public void onServiceConnect(BarometerDataService service) {
         mService = service;
+        if (mContent instanceof LiveGraphFragment) {
+            ((LiveGraphFragment) mContent).setService(mService);
+        }
     }
 
     @Override
@@ -91,4 +97,10 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         mDrawerToggle.syncState();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mContent instanceof LiveGraphFragment) {
+            finish();
+        }
+    }
 }

@@ -9,7 +9,8 @@ import android.os.IBinder;
  */
 public class BarometerServiceConnection implements ServiceConnection {
 
-    BarometerServiceEvents mEvents;
+    private BarometerServiceEvents mEvents;
+    private boolean mBound;
 
     public interface BarometerServiceEvents {
         public void onServiceConnect(BarometerDataService service);
@@ -18,6 +19,7 @@ public class BarometerServiceConnection implements ServiceConnection {
 
     public BarometerServiceConnection(BarometerServiceEvents events) {
         mEvents = events;
+        mBound = false;
     }
 
 
@@ -25,10 +27,18 @@ public class BarometerServiceConnection implements ServiceConnection {
 
         BarometerDataService.BarometerDataServiceBinder binder = (BarometerDataService.BarometerDataServiceBinder) service;
         mEvents.onServiceConnect(binder.getService());
+        mBound = true;
     }
 
     public void onServiceDisconnected(ComponentName arg0) {
-        mEvents.onServiceDisconnect();
+        if (mBound) {
+            mBound = false;
+            mEvents.onServiceDisconnect();
+        }
+    }
+
+    public boolean isBound() {
+        return mBound;
     }
 
 }

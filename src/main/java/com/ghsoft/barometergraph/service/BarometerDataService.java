@@ -2,33 +2,97 @@ package com.ghsoft.barometergraph.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
+
+import com.ghsoft.barometergraph.data.BarometerDataPoint;
+import com.ghsoft.barometergraph.data.IDataReceiver;
+
+import java.util.LinkedList;
 
 /**
  * Created by brian on 7/21/15.
  */
-public class BarometerDataService extends Service {
+public class BarometerDataService extends Service implements SensorEventListener {
 
     private final BarometerDataServiceBinder mBinder = new BarometerDataServiceBinder();
-    public int test;
+    private IDataReceiver mDataReceiver;
+    private LinkedList<BarometerDataPoint> mBuffer;
+    private SensorManager mSensorManager;
+    private boolean mBound;
+    private static final int TEN_SECONDS = 10;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e("test", "started");
-        test = 0;
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        mBuffer = new LinkedList<>();
+        mBound = false;
+    }
+
+    public void setDataReceiver(IDataReceiver receiver) {
+        mDataReceiver = receiver;
+        mDataReceiver.writeHistory(mBuffer);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
+        mBound = true;
         return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        mBound = false;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < TEN_SECONDS; i++) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {}
+                    if (mBound)
+                        return;
+                }
+                stopAndClose();
+
+            }
+        }).start();
+
+
+        return super.onUnbind(intent);
+    }
+
+    private void stopAndClose() {
+        mSensorManager.unregisterListener(this);
+        stopSelf();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        BarometerDataPoint point = new BarometerDataPoint(event.values[0], event.timestamp);
+
+        mBuffer.add(point);
+        if (mDataReceiver != null) {
+            //Log.e(System.identityHashCode(this) + " ", "" + mBuffer.size());
+            mDataReceiver.write(point);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 
     public class BarometerDataServiceBinder extends Binder {
