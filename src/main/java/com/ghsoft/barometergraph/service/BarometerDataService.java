@@ -8,6 +8,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.ghsoft.barometergraph.data.BarometerDataPoint;
 import com.ghsoft.barometergraph.data.IDataReceiver;
@@ -52,9 +53,9 @@ public class BarometerDataService extends Service implements SensorEventListener
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {
-            stopSelf();
+            stopAndClose();
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -63,7 +64,7 @@ public class BarometerDataService extends Service implements SensorEventListener
 
         mBuffer.add(point);
         if (mDataReceiver != null) {
-            //Log.e(System.identityHashCode(this) + " ", "" + mBuffer.size());
+            Log.e(System.identityHashCode(this) + " ", "" + mBuffer.size());
             mDataReceiver.write(point);
         }
 
@@ -81,5 +82,11 @@ public class BarometerDataService extends Service implements SensorEventListener
         public BarometerDataService getService() {
             return BarometerDataService.this;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mSensorManager.unregisterListener(this);
     }
 }

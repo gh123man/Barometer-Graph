@@ -3,6 +3,7 @@ package com.ghsoft.barometergraph.views;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.ghsoft.barometergraph.data.BarometerDataPoint;
 import com.ghsoft.barometergraph.data.IDataReceiver;
@@ -18,6 +19,10 @@ import java.util.LinkedList;
  * Created by brian on 7/26/15.
  */
 public class BarometerDataGraph extends LineChart implements IDataReceiver {
+
+    private static final int DEFAULT_DATA_LIMIT = 10000;
+
+    private int mDataLimit;
 
     public BarometerDataGraph(Context context) {
         super(context);
@@ -35,6 +40,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
     }
 
     private void setupView(Context context) {
+        mDataLimit = DEFAULT_DATA_LIMIT;
         LineData data = new LineData();
         setData(data);
         getAxisRight().setStartAtZero(false);
@@ -66,11 +72,10 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
 
         LineDataSet set = getDataSet(lineData);
 
-        // add a new x-value first
         lineData.addXValue("" + dataPoint.getmTimeStamp());
         lineData.addEntry(new Entry(dataPoint.getValue(), set.getEntryCount()), 0);
 
-        // let the chart know it's data has changed
+        checkAndTrim();
         notifyDataSetChanged();
         scrollToFront(lineData);
 
@@ -107,5 +112,17 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         set.setValueTextSize(9f);
         set.setDrawValues(false);
         return set;
+    }
+
+    public void checkAndTrim() {
+        LineData data = getData();
+        Log.e("test", "" + data.getDataSetCount());
+        while (data.getDataSetCount() > mDataLimit) {
+            data.removeEntry(data.getDataSetCount() - 1, 0);
+        }
+    }
+
+    public void setDataLengthLimit(int limit) {
+        mDataLimit = limit;
     }
 }

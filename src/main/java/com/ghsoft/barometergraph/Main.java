@@ -101,7 +101,9 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
     @Override
     public void onBackPressed() {
         if (mContent instanceof LiveGraphFragment) {
+            mFragmentManager.beginTransaction().remove(mContent).commit();
             stopService(mServiceIntent);
+            mService.stopSelf();
             finish();
         }
     }

@@ -42,6 +42,7 @@ public class LiveGraphFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_live_graph, null);
         mChart = (BarometerDataGraph) v.findViewById(R.id.chart);
+        mChart.setDataLengthLimit(10);
         return v;
    }
 
