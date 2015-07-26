@@ -19,12 +19,11 @@ import java.util.LinkedList;
  */
 public class BarometerDataService extends Service implements SensorEventListener {
 
+    private static final int BUFFER_CAP = 2000;
     private final BarometerDataServiceBinder mBinder = new BarometerDataServiceBinder();
     private IDataReceiver mDataReceiver;
     private LinkedList<BarometerDataPoint> mBuffer;
     private SensorManager mSensorManager;
-    private boolean mBound;
-    private static final int TEN_SECONDS = 10;
 
     @Override
     public void onCreate() {
@@ -33,7 +32,6 @@ public class BarometerDataService extends Service implements SensorEventListener
         Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
         mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
         mBuffer = new LinkedList<>();
-        mBound = false;
     }
 
     public void setDataReceiver(IDataReceiver receiver) {
@@ -43,30 +41,7 @@ public class BarometerDataService extends Service implements SensorEventListener
 
     @Override
     public IBinder onBind(Intent intent) {
-        mBound = true;
         return mBinder;
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        mBound = false;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < TEN_SECONDS; i++) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {}
-                    if (mBound)
-                        return;
-                }
-                stopAndClose();
-
-            }
-        }).start();
-
-
-        return super.onUnbind(intent);
     }
 
     private void stopAndClose() {
@@ -76,6 +51,9 @@ public class BarometerDataService extends Service implements SensorEventListener
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null) {
+            stopSelf();
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -87,6 +65,10 @@ public class BarometerDataService extends Service implements SensorEventListener
         if (mDataReceiver != null) {
             //Log.e(System.identityHashCode(this) + " ", "" + mBuffer.size());
             mDataReceiver.write(point);
+        }
+
+        if (mBuffer.size() > BUFFER_CAP) {
+            mBuffer.removeLast();
         }
     }
 

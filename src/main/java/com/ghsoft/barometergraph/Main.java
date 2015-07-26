@@ -24,6 +24,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
     private BarometerServiceConnection mServiceConnection;
     private FragmentManager mFragmentManager;
     private Fragment mContent;
+    private Intent mServiceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +34,9 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
 
         mFragmentManager = getFragmentManager();
         mServiceConnection = new BarometerServiceConnection(this);
-        Intent intent = new Intent(this, BarometerDataService.class);
-        startService(intent);
-        bindService(intent, mServiceConnection, 0);
+        mServiceIntent = new Intent(this, BarometerDataService.class);
+        startService(mServiceIntent);
+        bindService(mServiceIntent, mServiceConnection, 0);
         Log.e("BINDING", "BINDING");
 
 
@@ -100,6 +101,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
     @Override
     public void onBackPressed() {
         if (mContent instanceof LiveGraphFragment) {
+            stopService(mServiceIntent);
             finish();
         }
     }
