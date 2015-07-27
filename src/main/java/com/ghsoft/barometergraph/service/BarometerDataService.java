@@ -8,7 +8,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.ghsoft.barometergraph.data.BarometerDataPoint;
 import com.ghsoft.barometergraph.data.IDataReceiver;
@@ -20,7 +19,7 @@ import java.util.LinkedList;
  */
 public class BarometerDataService extends Service implements SensorEventListener {
 
-    private static final int BUFFER_CAP = 2000;
+//    private static final int BUFFER_CAP = Integer.MAX_VALUE;
     private final BarometerDataServiceBinder mBinder = new BarometerDataServiceBinder();
     private IDataReceiver mDataReceiver;
     private LinkedList<BarometerDataPoint> mBuffer;
@@ -60,17 +59,17 @@ public class BarometerDataService extends Service implements SensorEventListener
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        BarometerDataPoint point = new BarometerDataPoint(event.values[0], event.timestamp);
+        BarometerDataPoint point = new BarometerDataPoint(event.values[0], System.currentTimeMillis());
 
         mBuffer.add(point);
         if (mDataReceiver != null) {
-            Log.e(System.identityHashCode(this) + " ", "" + mBuffer.size());
+            //Log.e(System.identityHashCode(this) + " ", "" + mBuffer.size());
             mDataReceiver.write(point);
         }
 
-        if (mBuffer.size() > BUFFER_CAP) {
-            mBuffer.removeLast();
-        }
+//        if (mBuffer.size() >= BUFFER_CAP) {
+//            mBuffer.removeLast();
+//        }
     }
 
     @Override

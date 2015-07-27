@@ -3,16 +3,20 @@ package com.ghsoft.barometergraph.views;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.MotionEvent;
 
 import com.ghsoft.barometergraph.data.BarometerDataPoint;
 import com.ghsoft.barometergraph.data.IDataReceiver;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ValueFormatter;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 
 /**
@@ -20,12 +24,24 @@ import java.util.LinkedList;
  */
 public class BarometerDataGraph extends LineChart implements IDataReceiver {
 
-    private static final int DEFAULT_DATA_LIMIT = 10000;
+    private boolean mLockAutoScroll;
+    private BarometerDataGraphCallbacks mCallbacks;
+    private TransformFunction mTransform;
 
-    private int mDataLimit;
+    public interface BarometerDataGraphCallbacks {
+        void onAutoScrollChanged(boolean val);
+        void onValueChanged(float value, String unit);
+    }
 
-    public BarometerDataGraph(Context context) {
+    public interface TransformFunction {
+        float transform(float val);
+        String getUnit();
+    }
+
+    public BarometerDataGraph(Context context, BarometerDataGraphCallbacks callbacks, TransformFunction transform) {
         super(context);
+        mCallbacks = callbacks;
+        mTransform = transform;
         setupView(context);
     }
 
@@ -39,13 +55,27 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         setupView(context);
     }
 
+    public void setCallbacks(BarometerDataGraphCallbacks callbacks) {
+        mCallbacks = callbacks;
+    }
+
+    public void setTransformFunction(TransformFunction transform) {
+        mTransform = transform;
+    }
+
     private void setupView(Context context) {
-        mDataLimit = DEFAULT_DATA_LIMIT;
+        mLockAutoScroll = true;
         LineData data = new LineData();
         setData(data);
         getAxisRight().setStartAtZero(false);
         getAxisRight().setDrawLabels(false);
         getAxisLeft().setStartAtZero(false);
+        getAxisLeft().setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float v) {
+                return String.format("%.3f", v);
+            };
+        });
         setAutoScaleMinMaxEnabled(true);
     }
 
@@ -60,8 +90,10 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
     }
 
     private void scrollToFront(LineData data) {
-        setVisibleXRangeMaximum(150);
-        moveViewToX(data.getXValCount() - 151);
+        if (mLockAutoScroll) {
+            setVisibleXRangeMaximum(150);
+            moveViewToX(data.getXValCount() - 151);
+        }
     }
 
     @Override
@@ -72,13 +104,11 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
 
         LineDataSet set = getDataSet(lineData);
 
-        lineData.addXValue("" + dataPoint.getmTimeStamp());
-        lineData.addEntry(new Entry(dataPoint.getValue(), set.getEntryCount()), 0);
+        addPoint(dataPoint, lineData, set);
 
-        checkAndTrim();
         notifyDataSetChanged();
         scrollToFront(lineData);
-
+        mCallbacks.onValueChanged(getCorrectValue(dataPoint.getValue()), getUnit());
     }
 
     @Override
@@ -91,8 +121,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         LineDataSet set = getDataSet(lineData);
 
         for (BarometerDataPoint dataPoint : data) {
-            lineData.addXValue("" + dataPoint.getmTimeStamp());
-            lineData.addEntry(new Entry(dataPoint.getValue(), set.getEntryCount()), 0);
+            addPoint(dataPoint, lineData, set);
         }
 
         notifyDataSetChanged();
@@ -100,8 +129,18 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         scrollToFront(lineData);
     }
 
+    private void addPoint(BarometerDataPoint dataPoint, LineData lineData, DataSet set) {
+        lineData.addXValue(formatTime(dataPoint.getmTimeStamp()));
+        lineData.addEntry(new Entry(getCorrectValue(dataPoint.getValue()), set.getEntryCount()), 0);
+    }
+
+    private static String formatTime(long timestamp) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        return sdf.format(new Date(timestamp));
+    }
+
     private LineDataSet createSet() {
-        LineDataSet set = new LineDataSet(null, "Dynamic Data");
+        LineDataSet set = new LineDataSet(null, getUnit());
         set.setColor(ColorTemplate.getHoloBlue());
         set.setLineWidth(2f);
         set.setDrawCircles(false);
@@ -114,15 +153,29 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         return set;
     }
 
-    public void checkAndTrim() {
-        LineData data = getData();
-        Log.e("test", "" + data.getDataSetCount());
-        while (data.getDataSetCount() > mDataLimit) {
-            data.removeEntry(data.getDataSetCount() - 1, 0);
-        }
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        mLockAutoScroll = false;
+        mCallbacks.onAutoScrollChanged(mLockAutoScroll);
+        return super.onTouchEvent(event);
     }
 
-    public void setDataLengthLimit(int limit) {
-        mDataLimit = limit;
+    public boolean getAutoScroll() {
+        return mLockAutoScroll;
     }
+
+    public void setAutoScroll(boolean aockAutoScroll) {
+        mLockAutoScroll = aockAutoScroll;
+    }
+
+    private String getUnit() {
+        if (mTransform != null) return mTransform.getUnit();
+        return "";
+    }
+
+    private float getCorrectValue(float value) {
+        if (mTransform != null) return mTransform.transform(value);
+        return value;
+    }
+
 }
