@@ -20,6 +20,8 @@ import com.ghsoft.barometergraph.views.TransformHelper;
  */
 public class LiveGraphFragment extends Fragment implements BarometerDataGraph.BarometerDataGraphCallbacks, CheckBox.OnCheckedChangeListener {
 
+    private static final String FLOAT_FORMAT = "%.4f";
+
     private BarometerDataService mService;
     private LiveGraphFragmentEvents mEvents;
     private BarometerDataGraph mChart;
@@ -76,7 +78,7 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
 
     @Override
     public void onValueChanged(float value, String unit) {
-        mUnitView.setText("" + value + " " + unit);
+        mUnitView.setText(String.format(FLOAT_FORMAT, value) + " " + unit);
     }
 
 

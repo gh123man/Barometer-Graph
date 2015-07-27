@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import com.ghsoft.barometergraph.R;
 import com.ghsoft.barometergraph.data.BarometerDataPoint;
 import com.ghsoft.barometergraph.data.IDataReceiver;
 import com.github.mikephil.charting.charts.LineChart;
@@ -24,9 +25,13 @@ import java.util.LinkedList;
  */
 public class BarometerDataGraph extends LineChart implements IDataReceiver {
 
+    private static final String FLOAT_FORMAT = "%.3f";
+    private static final int VISIBLE_POINTS = 200;
+
     private boolean mLockAutoScroll;
     private BarometerDataGraphCallbacks mCallbacks;
     private TransformFunction mTransform;
+    private Context mContext;
 
     public interface BarometerDataGraphCallbacks {
         void onAutoScrollChanged(boolean val);
@@ -64,6 +69,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
     }
 
     private void setupView(Context context) {
+        mContext = context;
         mLockAutoScroll = true;
         LineData data = new LineData();
         setData(data);
@@ -73,10 +79,14 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         getAxisLeft().setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float v) {
-                return String.format("%.3f", v);
-            };
+                return String.format(FLOAT_FORMAT, v);
+            }
+
+            ;
         });
+        setMarkerView(new BarometerMarkerView(mContext, R.layout.marker_view));
         setAutoScaleMinMaxEnabled(true);
+
     }
 
     private LineDataSet getDataSet(LineData data) {
@@ -90,9 +100,9 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
     }
 
     private void scrollToFront(LineData data) {
+        setVisibleXRangeMaximum(VISIBLE_POINTS);
         if (mLockAutoScroll) {
-            setVisibleXRangeMaximum(150);
-            moveViewToX(data.getXValCount() - 151);
+            moveViewToX(data.getXValCount() - (VISIBLE_POINTS + 1));
         }
     }
 
@@ -107,6 +117,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         addPoint(dataPoint, lineData, set);
 
         notifyDataSetChanged();
+        invalidate();
         scrollToFront(lineData);
         mCallbacks.onValueChanged(getCorrectValue(dataPoint.getValue()), getUnit());
     }
@@ -125,7 +136,6 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         }
 
         notifyDataSetChanged();
-
         scrollToFront(lineData);
     }
 
@@ -141,7 +151,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
 
     private LineDataSet createSet() {
         LineDataSet set = new LineDataSet(null, getUnit());
-        set.setColor(ColorTemplate.getHoloBlue());
+        set.setColor(mContext.getResources().getColor(R.color.primaryAppColor));
         set.setLineWidth(2f);
         set.setDrawCircles(false);
         set.setFillAlpha(65);
@@ -164,8 +174,9 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         return mLockAutoScroll;
     }
 
-    public void setAutoScroll(boolean aockAutoScroll) {
-        mLockAutoScroll = aockAutoScroll;
+    public void setAutoScroll(boolean lockAutoScroll) {
+        highlightValues(null);
+        mLockAutoScroll = lockAutoScroll;
     }
 
     private String getUnit() {

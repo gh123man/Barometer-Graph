@@ -12,7 +12,7 @@ public class TransformHelper {
         }
         @Override
         public String getUnit() {
-            return "Psi";
+            return "psi";
         }
     };
 }

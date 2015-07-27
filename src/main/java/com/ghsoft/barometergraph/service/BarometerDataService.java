@@ -11,6 +11,7 @@ import android.os.IBinder;
 
 import com.ghsoft.barometergraph.data.BarometerDataPoint;
 import com.ghsoft.barometergraph.data.IDataReceiver;
+import com.ghsoft.barometergraph.data.RunningAverage;
 
 import java.util.LinkedList;
 
@@ -24,6 +25,7 @@ public class BarometerDataService extends Service implements SensorEventListener
     private IDataReceiver mDataReceiver;
     private LinkedList<BarometerDataPoint> mBuffer;
     private SensorManager mSensorManager;
+    private RunningAverage mAverager;
 
     @Override
     public void onCreate() {
@@ -32,6 +34,7 @@ public class BarometerDataService extends Service implements SensorEventListener
         Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
         mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
         mBuffer = new LinkedList<>();
+        mAverager = new RunningAverage(10);
     }
 
     public void setDataReceiver(IDataReceiver receiver) {
@@ -59,8 +62,8 @@ public class BarometerDataService extends Service implements SensorEventListener
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        BarometerDataPoint point = new BarometerDataPoint(event.values[0], System.currentTimeMillis());
-
+        mAverager.put(event.values[0]);
+        BarometerDataPoint point = new BarometerDataPoint(mAverager.get(), System.currentTimeMillis());
         mBuffer.add(point);
         if (mDataReceiver != null) {
             //Log.e(System.identityHashCode(this) + " ", "" + mBuffer.size());
@@ -87,5 +90,9 @@ public class BarometerDataService extends Service implements SensorEventListener
     public void onDestroy() {
         super.onDestroy();
         mSensorManager.unregisterListener(this);
+    }
+
+    public void setRunningAverageSize(int size) {
+        mAverager.setSize(size);
     }
 }

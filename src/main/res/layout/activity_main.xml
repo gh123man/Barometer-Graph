@@ -6,8 +6,7 @@
               android:fitsSystemWindows="true"
               android:background="@color/primaryAppColor"
               android:layout_height="match_parent">
-    <LinearLayout
-          android:orientation="vertical"
+    <RelativeLayout
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:background="@color/primaryBackground" >
@@ -55,5 +54,5 @@
                     />
             </LinearLayout>
         </android.support.v4.widget.DrawerLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>
