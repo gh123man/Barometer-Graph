@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.ghsoft.barometergraph.R;
 import com.ghsoft.barometergraph.service.BarometerDataService;
 import com.ghsoft.barometergraph.views.BarometerDataGraph;
+import com.ghsoft.barometergraph.views.ExpanderView;
 import com.ghsoft.barometergraph.views.TransformHelper;
 
 /**
@@ -58,6 +59,10 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
         mAutoScroll = (CheckBox) v.findViewById(R.id.auto_scroll);
         mAutoScroll.setChecked(mChart.getAutoScroll());
         mAutoScroll.setOnCheckedChangeListener(this);
+
+        ExpanderView ev = (ExpanderView) v.findViewById(R.id.expander);
+        ev.setExpandButton(R.layout.expand_button);
+
         return v;
    }
 
@@ -80,6 +85,5 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     public void onValueChanged(float value, String unit) {
         mUnitView.setText(String.format(FLOAT_FORMAT, value) + " " + unit);
     }
-
 
 }
