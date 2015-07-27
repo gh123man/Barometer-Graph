@@ -107,4 +107,5 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
             finish();
         }
     }
+
 }
