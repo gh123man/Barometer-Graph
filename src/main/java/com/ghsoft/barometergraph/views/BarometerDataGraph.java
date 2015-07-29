@@ -71,6 +71,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
     private void setupView(Context context) {
         mContext = context;
         mLockAutoScroll = true;
+        setAutoScale(true);
         LineData data = new LineData();
         setData(data);
         getAxisRight().setStartAtZero(false);
@@ -85,8 +86,11 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
             ;
         });
         setMarkerView(new BarometerMarkerView(mContext, R.layout.marker_view));
-        setAutoScaleMinMaxEnabled(true);
 
+    }
+
+    public void setAutoScale(boolean autoScale) {
+        setAutoScaleMinMaxEnabled(autoScale);
     }
 
     private LineDataSet getDataSet(LineData data) {

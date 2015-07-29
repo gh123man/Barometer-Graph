@@ -3,6 +3,8 @@ package com.ghsoft.barometergraph.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 
@@ -11,15 +13,17 @@ import com.ghsoft.barometergraph.R;
 /**
  * Created by brian on 7/28/15.
  */
-public class DataOptions extends LinearLayout implements NumberPicker.OnValueChangeListener {
+public class DataOptions extends LinearLayout implements NumberPicker.OnValueChangeListener, CompoundButton.OnCheckedChangeListener {
 
     private LayoutInflater mInflater;
     private LinearLayout mRootView;
     private NumberPicker mPicker;
+    private CheckBox mAutoScale;
     private DataOptionsEvents mEvents;
 
     public interface DataOptionsEvents {
         void onRunningAverageChange(int val);
+        void onAutoScaleChange(boolean enable);
     }
 
     public DataOptions(Context context) {
@@ -46,6 +50,8 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
         mPicker = (NumberPicker) mRootView.findViewById(R.id.picker);
         setupPicker();
 
+        mAutoScale = (CheckBox) mRootView.findViewById(R.id.auto_scale);
+        mAutoScale.setOnCheckedChangeListener(this);
     }
 
     private void setupPicker() {
@@ -58,9 +64,18 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
         mPicker.setValue(averageSize);
     }
 
+    public void setAutoScale(boolean autoScale) {
+        mAutoScale.setChecked(autoScale);
+    }
+
     @Override
     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
         if (mEvents != null)
             mEvents.onRunningAverageChange(newVal);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        mEvents.onAutoScaleChange(isChecked);
     }
 }

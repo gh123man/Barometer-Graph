@@ -61,6 +61,7 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
 
         mDataOptions = (DataOptions) v.findViewById(R.id.data_options);
         mDataOptions.setEventHandler(this);
+        mDataOptions.setAutoScale(true);
 
         return v;
    }
@@ -74,6 +75,11 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     @Override
     public void onRunningAverageChange(int val) {
         mService.setRunningAverageSize(val);
+    }
+
+    @Override
+    public void onAutoScaleChange(boolean enabled) {
+        mChart.setAutoScale(enabled);
     }
 
     @Override

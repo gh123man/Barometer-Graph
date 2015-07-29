@@ -47,10 +47,18 @@
                     android:id="@+id/auto_scroll"/>
             </LinearLayout>
 
+            <com.ghsoft.barometergraph.views.DataRecording
+                android:id="@+id/recording_expander_cont"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/data_space"
+                android:layout_marginTop="20dp">
+            </com.ghsoft.barometergraph.views.DataRecording>
+
             <com.ghsoft.barometergraph.views.DataOptions
                 android:id="@+id/data_options"
-                android:layout_marginTop="20dp"
-                android:layout_below="@id/data_space"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/recording_expander_cont"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
