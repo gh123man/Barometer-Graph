@@ -6,13 +6,20 @@
 
     <FrameLayout
         android:id="@+id/expand_button"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="50dp">
     </FrameLayout>
 
     <LinearLayout
         android:id="@+id/content"
         android:visibility="gone"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:padding="5dp"
+        android:background="@color/mid_lighter_grey2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >

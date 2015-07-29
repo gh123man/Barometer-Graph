@@ -16,7 +16,7 @@ public class RunningAverage {
     }
 
     public void put(float val) {
-        if (mData.size() > mSize) {
+        while (mData.size() > mSize) {
             mData.remove(0);
         }
         mData.add(val);
@@ -30,6 +30,10 @@ public class RunningAverage {
         }
 
         return sum / mData.size();
+    }
+
+    public int getSize() {
+        return mSize;
     }
 
     public void setSize(int size) {

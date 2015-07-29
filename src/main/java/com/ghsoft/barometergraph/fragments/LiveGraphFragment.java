@@ -13,13 +13,13 @@ import android.widget.TextView;
 import com.ghsoft.barometergraph.R;
 import com.ghsoft.barometergraph.service.BarometerDataService;
 import com.ghsoft.barometergraph.views.BarometerDataGraph;
-import com.ghsoft.barometergraph.views.ExpanderView;
+import com.ghsoft.barometergraph.views.DataOptions;
 import com.ghsoft.barometergraph.views.TransformHelper;
 
 /**
  * Created by brian on 7/21/15.
  */
-public class LiveGraphFragment extends Fragment implements BarometerDataGraph.BarometerDataGraphCallbacks, CheckBox.OnCheckedChangeListener {
+public class LiveGraphFragment extends Fragment implements BarometerDataGraph.BarometerDataGraphCallbacks, CheckBox.OnCheckedChangeListener, DataOptions.DataOptionsEvents {
 
     private static final String FLOAT_FORMAT = "%.4f";
 
@@ -28,7 +28,7 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     private BarometerDataGraph mChart;
     private CheckBox mAutoScroll;
     private TextView mUnitView;
-    private boolean mLiveWrite;
+    private DataOptions mDataOptions;
 
     public LiveGraphFragment() {
     }
@@ -40,7 +40,6 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mLiveWrite = false;
             mEvents = (LiveGraphFragmentEvents) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()  + " must implement LoginEvents and IGlobalEvents");
@@ -60,8 +59,8 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
         mAutoScroll.setChecked(mChart.getAutoScroll());
         mAutoScroll.setOnCheckedChangeListener(this);
 
-        ExpanderView ev = (ExpanderView) v.findViewById(R.id.expander);
-        ev.setExpandButton(R.layout.expand_button);
+        mDataOptions = (DataOptions) v.findViewById(R.id.data_options);
+        mDataOptions.setEventHandler(this);
 
         return v;
    }
@@ -69,6 +68,12 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     public void setService(BarometerDataService service) {
         mService = service;
         mService.setDataReceiver(mChart);
+        mDataOptions.setAverageSize(mService.getAverageSize());
+    }
+
+    @Override
+    public void onRunningAverageChange(int val) {
+        mService.setRunningAverageSize(val);
     }
 
     @Override

@@ -8,7 +8,7 @@ public class TransformHelper {
     public static final BarometerDataGraph.TransformFunction TO_PSI = new BarometerDataGraph.TransformFunction() {
         @Override
         public float transform(float val) {
-            return (float) (val * 0.0145037738);
+            return (float) (val * 0.014503773773);
         }
         @Override
         public String getUnit() {

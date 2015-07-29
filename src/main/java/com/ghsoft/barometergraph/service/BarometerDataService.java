@@ -95,4 +95,8 @@ public class BarometerDataService extends Service implements SensorEventListener
     public void setRunningAverageSize(int size) {
         mAverager.setSize(size);
     }
+
+    public int getAverageSize() {
+        return mAverager.getSize();
+    }
 }

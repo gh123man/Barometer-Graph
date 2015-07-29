@@ -47,18 +47,16 @@
                     android:id="@+id/auto_scroll"/>
             </LinearLayout>
 
-            <com.ghsoft.barometergraph.views.ExpanderView
-                android:id="@+id/expander"
+            <com.ghsoft.barometergraph.views.DataOptions
+                android:id="@+id/data_options"
+                android:layout_marginTop="20dp"
                 android:layout_below="@id/data_space"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                
-                <NumberPicker
-                    android:id="@+id/picker"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"></NumberPicker>
+                android:layout_height="wrap_content">
 
-            </com.ghsoft.barometergraph.views.ExpanderView>
+            </com.ghsoft.barometergraph.views.DataOptions>
+
+
         </RelativeLayout>
     </ScrollView>
 
