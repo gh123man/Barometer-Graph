@@ -41,7 +41,7 @@ public class DataRecording extends LinearLayout {
         mRootView = (LinearLayout) mInflater.inflate(R.layout.data_recording_view, this);
 
         ExpanderView ev = (ExpanderView) mRootView.findViewById(R.id.recording_expander);
-        ev.setExpandButton(R.layout.expand_button);
+        ev.setExpandtext("Recording");
 
     }
 

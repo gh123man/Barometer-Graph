@@ -57,7 +57,7 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
         mRootView = (LinearLayout) mInflater.inflate(R.layout.data_options_view, this);
 
         ExpanderView ev = (ExpanderView)  mRootView.findViewById(R.id.expander);
-        ev.setExpandButton(R.layout.expand_button);
+        ev.setExpandtext("Data Options");
 
         mUnits = (Spinner) mRootView.findViewById(R.id.unit_picker);
         mUnits.setOnItemSelectedListener(this);
