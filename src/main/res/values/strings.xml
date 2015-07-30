@@ -4,5 +4,9 @@
     <string name="app_name">Barometer Graph</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="reset_graph_warning">Changing the unit will reset the graph and all buffered data. Are you sure?</string>
 
 </resources>

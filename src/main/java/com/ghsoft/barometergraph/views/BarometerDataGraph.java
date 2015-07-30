@@ -30,12 +30,12 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
 
     private boolean mLockAutoScroll;
     private BarometerDataGraphCallbacks mCallbacks;
-    private TransformFunction mTransform;
     private Context mContext;
 
     public interface BarometerDataGraphCallbacks {
         void onAutoScrollChanged(boolean val);
-        void onValueChanged(float value, String unit);
+        void onValueChanged(float value);
+        String getUnit();
     }
 
     public interface TransformFunction {
@@ -43,10 +43,9 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         String getUnit();
     }
 
-    public BarometerDataGraph(Context context, BarometerDataGraphCallbacks callbacks, TransformFunction transform) {
+    public BarometerDataGraph(Context context, BarometerDataGraphCallbacks callbacks) {
         super(context);
         mCallbacks = callbacks;
-        mTransform = transform;
         setupView(context);
     }
 
@@ -62,10 +61,6 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
 
     public void setCallbacks(BarometerDataGraphCallbacks callbacks) {
         mCallbacks = callbacks;
-    }
-
-    public void setTransformFunction(TransformFunction transform) {
-        mTransform = transform;
     }
 
     private void setupView(Context context) {
@@ -123,7 +118,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         notifyDataSetChanged();
         invalidate();
         scrollToFront(lineData);
-        mCallbacks.onValueChanged(getCorrectValue(dataPoint.getValue()), getUnit());
+        mCallbacks.onValueChanged(dataPoint.getValue());
     }
 
     @Override
@@ -145,7 +140,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
 
     private void addPoint(BarometerDataPoint dataPoint, LineData lineData, DataSet set) {
         lineData.addXValue(formatTime(dataPoint.getmTimeStamp()));
-        lineData.addEntry(new Entry(getCorrectValue(dataPoint.getValue()), set.getEntryCount()), 0);
+        lineData.addEntry(new Entry(dataPoint.getValue(), set.getEntryCount()), 0);
     }
 
     private static String formatTime(long timestamp) {
@@ -154,7 +149,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
     }
 
     private LineDataSet createSet() {
-        LineDataSet set = new LineDataSet(null, getUnit());
+        LineDataSet set = new LineDataSet(null, mCallbacks.getUnit());
         set.setColor(mContext.getResources().getColor(R.color.primaryAppColor));
         set.setLineWidth(2f);
         set.setDrawCircles(false);
@@ -181,16 +176,6 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
     public void setAutoScroll(boolean lockAutoScroll) {
         highlightValues(null);
         mLockAutoScroll = lockAutoScroll;
-    }
-
-    private String getUnit() {
-        if (mTransform != null) return mTransform.getUnit();
-        return "";
-    }
-
-    private float getCorrectValue(float value) {
-        if (mTransform != null) return mTransform.transform(value);
-        return value;
     }
 
 }

@@ -12,6 +12,8 @@ import android.os.IBinder;
 import com.ghsoft.barometergraph.data.BarometerDataPoint;
 import com.ghsoft.barometergraph.data.IDataReceiver;
 import com.ghsoft.barometergraph.data.RunningAverage;
+import com.ghsoft.barometergraph.data.TransformHelper;
+import com.ghsoft.barometergraph.views.BarometerDataGraph;
 
 import java.util.LinkedList;
 
@@ -26,6 +28,7 @@ public class BarometerDataService extends Service implements SensorEventListener
     private LinkedList<BarometerDataPoint> mBuffer;
     private SensorManager mSensorManager;
     private RunningAverage mAverager;
+    private BarometerDataGraph.TransformFunction mTransform;
 
     @Override
     public void onCreate() {
@@ -35,6 +38,7 @@ public class BarometerDataService extends Service implements SensorEventListener
         mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
         mBuffer = new LinkedList<>();
         mAverager = new RunningAverage(10);
+        mTransform = TransformHelper.TO_PSI;
     }
 
     public void setDataReceiver(IDataReceiver receiver) {
@@ -63,7 +67,7 @@ public class BarometerDataService extends Service implements SensorEventListener
     @Override
     public void onSensorChanged(SensorEvent event) {
         mAverager.put(event.values[0]);
-        BarometerDataPoint point = new BarometerDataPoint(mAverager.get(), System.currentTimeMillis());
+        BarometerDataPoint point = new BarometerDataPoint(getCorrectValue(mAverager.get()), System.currentTimeMillis());
         mBuffer.add(point);
         if (mDataReceiver != null) {
             //Log.e(System.identityHashCode(this) + " ", "" + mBuffer.size());
@@ -99,4 +103,21 @@ public class BarometerDataService extends Service implements SensorEventListener
     public int getAverageSize() {
         return mAverager.getSize();
     }
+
+    public void setTransformFunction(BarometerDataGraph.TransformFunction transform) {
+        mBuffer.clear();
+        mAverager.clear();
+        mTransform = transform;
+    }
+
+    public String getUnit() {
+        if (mTransform != null) return mTransform.getUnit();
+        return "";
+    }
+
+    private float getCorrectValue(float value) {
+        if (mTransform != null) return mTransform.transform(value);
+        return value;
+    }
+
 }

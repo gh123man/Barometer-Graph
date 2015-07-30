@@ -8,13 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.ghsoft.barometergraph.R;
+import com.ghsoft.barometergraph.data.TransformHelper;
 import com.ghsoft.barometergraph.service.BarometerDataService;
 import com.ghsoft.barometergraph.views.BarometerDataGraph;
 import com.ghsoft.barometergraph.views.DataOptions;
-import com.ghsoft.barometergraph.views.TransformHelper;
 
 /**
  * Created by brian on 7/21/15.
@@ -24,7 +25,9 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     private static final String FLOAT_FORMAT = "%.4f";
 
     private BarometerDataService mService;
+    private LayoutInflater mInflater;
     private LiveGraphFragmentEvents mEvents;
+    private FrameLayout mChartContainer;
     private BarometerDataGraph mChart;
     private CheckBox mAutoScroll;
     private TextView mUnitView;
@@ -48,16 +51,16 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_live_graph, null);
-        mChart = (BarometerDataGraph) v.findViewById(R.id.chart);
+        mInflater = inflater;
+        View v = mInflater.inflate(R.layout.fragment_live_graph, null);
+        mChartContainer = (FrameLayout) v.findViewById(R.id.chart);
+        setupChart();
+
         mUnitView = (TextView) v.findViewById(R.id.unit_view);
 
-        mChart.setCallbacks(this);
-        mChart.setTransformFunction(TransformHelper.TO_PSI);
-
         mAutoScroll = (CheckBox) v.findViewById(R.id.auto_scroll);
-        mAutoScroll.setChecked(mChart.getAutoScroll());
         mAutoScroll.setOnCheckedChangeListener(this);
+        mAutoScroll.setChecked(mChart.getAutoScroll());
 
         mDataOptions = (DataOptions) v.findViewById(R.id.data_options);
         mDataOptions.setEventHandler(this);
@@ -66,10 +69,19 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
         return v;
    }
 
+    private void setupChart() {
+        mChart = new BarometerDataGraph(getActivity(), this);
+        mChartContainer.removeAllViews();
+        mChartContainer.addView(mChart);
+        mChart.notifyDataSetChanged();
+        mChart.invalidate();
+    }
+
     public void setService(BarometerDataService service) {
         mService = service;
-        mService.setDataReceiver(mChart);
         mDataOptions.setAverageSize(mService.getAverageSize());
+        mService.setDataReceiver(mChart);
+        mDataOptions.setUnit(mService.getUnit());
     }
 
     @Override
@@ -83,6 +95,13 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     }
 
     @Override
+    public void onUnitChange(String unit) {
+        mService.setTransformFunction(TransformHelper.fromUnit(unit));
+        setupChart();
+        mService.setDataReceiver(mChart);
+    }
+
+    @Override
     public void onAutoScrollChanged(boolean val) {
         mAutoScroll.setChecked(val);
     }
@@ -93,8 +112,13 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     }
 
     @Override
-    public void onValueChanged(float value, String unit) {
-        mUnitView.setText(String.format(FLOAT_FORMAT, value) + " " + unit);
+    public void onValueChanged(float value) {
+        mUnitView.setText(String.format(FLOAT_FORMAT, value) + " " + mService.getUnit());
+    }
+
+    @Override
+    public String getUnit() {
+        return mService.getUnit();
     }
 
 }

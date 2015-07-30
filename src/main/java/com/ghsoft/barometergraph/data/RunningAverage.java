@@ -28,8 +28,10 @@ public class RunningAverage {
         for (float f : mData) {
             sum += f;
         }
-
-        return sum / mData.size();
+        if (mData.size() > 0)
+            return sum / mData.size();
+        else
+            return 0;
     }
 
     public int getSize() {
@@ -38,5 +40,9 @@ public class RunningAverage {
 
     public void setSize(int size) {
         mSize = size;
+    }
+
+    public void clear() {
+        mData = new ArrayList<>();
     }
 }
