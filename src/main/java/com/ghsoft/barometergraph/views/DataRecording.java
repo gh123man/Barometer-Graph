@@ -3,6 +3,8 @@ package com.ghsoft.barometergraph.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 
@@ -11,16 +13,17 @@ import com.ghsoft.barometergraph.R;
 /**
  * Created by brian on 7/28/15.
  */
-public class DataRecording extends LinearLayout {
+public class DataRecording extends LinearLayout implements View.OnClickListener {
 
     private LayoutInflater mInflater;
     private LinearLayout mRootView;
     private NumberPicker mPicker;
-//    private DataOptionsEvents mEvents;
+    private RecordingOptionsEvents mEvents;
+    private Button mRecordButton;
 
-//    public interface DataOptionsEvents {
-//        void onRunningAverageChange(int val);
-//    }
+    public interface RecordingOptionsEvents {
+        boolean onRecordRequest();
+    }
 
     public DataRecording(Context context) {
         super(context);
@@ -32,9 +35,13 @@ public class DataRecording extends LinearLayout {
         setupView(context);
     }
 
-//    public void setEventHandler(DataOptionsEvents events) {
-//        mEvents = events;
-//    }
+    public void setEventHandler(RecordingOptionsEvents events) {
+        mEvents = events;
+    }
+
+    public void setRecordingState(boolean isRecording) {
+
+    }
 
     public void setupView(Context context) {
         mInflater = LayoutInflater.from(context);
@@ -43,6 +50,26 @@ public class DataRecording extends LinearLayout {
         ExpanderView ev = (ExpanderView) mRootView.findViewById(R.id.recording_expander);
         ev.setExpandtext("Recording");
 
+        mRecordButton = (Button) mRootView.findViewById(R.id.record_button);
+
+        mRecordButton.setOnClickListener(this);
+    }
+
+    private void recordRequest() {
+        if (mEvents.onRecordRequest()) {
+            mRecordButton.setText("Stop Recording");
+        } else {
+            mRecordButton.setText("Start Recording");
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.record_button:
+                recordRequest();
+                break;
+        }
     }
 
 }

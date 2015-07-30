@@ -10,11 +10,16 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import com.ghsoft.barometergraph.data.BarometerDataPoint;
+import com.ghsoft.barometergraph.data.CSVWriter;
+import com.ghsoft.barometergraph.data.FileMan;
 import com.ghsoft.barometergraph.data.IDataReceiver;
 import com.ghsoft.barometergraph.data.RunningAverage;
 import com.ghsoft.barometergraph.data.TransformHelper;
 import com.ghsoft.barometergraph.views.BarometerDataGraph;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 
 /**
@@ -29,6 +34,14 @@ public class BarometerDataService extends Service implements SensorEventListener
     private SensorManager mSensorManager;
     private RunningAverage mAverager;
     private BarometerDataGraph.TransformFunction mTransform;
+    private FileMan mFileMan;
+    private CSVWriter mWriter;
+    private File mFile;
+    private boolean mRecording;
+
+    public interface OutputRenameHandler {
+        String onGetFileName(String oldFileName);
+    }
 
     @Override
     public void onCreate() {
@@ -36,9 +49,13 @@ public class BarometerDataService extends Service implements SensorEventListener
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
         mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        mFileMan = new FileMan();
         mBuffer = new LinkedList<>();
         mAverager = new RunningAverage(10);
         mTransform = TransformHelper.TO_PSI;
+        mWriter = new CSVWriter();
+        mFile = null;
+        mRecording = false;
     }
 
     public void setDataReceiver(IDataReceiver receiver) {
@@ -54,6 +71,11 @@ public class BarometerDataService extends Service implements SensorEventListener
     private void stopAndClose() {
         mSensorManager.unregisterListener(this);
         stopSelf();
+        cleanup();
+    }
+
+    private void cleanup() {
+        mFileMan.clearTmp();
     }
 
     @Override
@@ -72,6 +94,10 @@ public class BarometerDataService extends Service implements SensorEventListener
         if (mDataReceiver != null) {
             //Log.e(System.identityHashCode(this) + " ", "" + mBuffer.size());
             mDataReceiver.write(point);
+        }
+
+        if (mRecording) {
+            mWriter.writeRow(new String[] {"" + point.getmTimeStamp(), "" + point.getValue()});
         }
 
 //        if (mBuffer.size() >= BUFFER_CAP) {
@@ -94,9 +120,11 @@ public class BarometerDataService extends Service implements SensorEventListener
     public void onDestroy() {
         super.onDestroy();
         mSensorManager.unregisterListener(this);
+        cleanup();
     }
 
     public void setRunningAverageSize(int size) {
+        if (mRecording) return;
         mAverager.setSize(size);
     }
 
@@ -118,6 +146,39 @@ public class BarometerDataService extends Service implements SensorEventListener
     private float getCorrectValue(float value) {
         if (mTransform != null) return mTransform.transform(value);
         return value;
+    }
+
+    public void startRecording(boolean clearBuffer) {
+        mFile = mFileMan.acquireTempFile();
+        try {
+            mWriter.setWriter(new PrintWriter(mFile));
+            mRecording = true;
+
+            if (clearBuffer) {
+                mBuffer.clear();
+            } else {
+                for (BarometerDataPoint p : mBuffer) {
+                    mWriter.writeRow(new String[] {"" + p.getmTimeStamp(), "" + p.getValue()});
+                }
+            }
+        } catch (FileNotFoundException e) {
+            //fail
+        }
+    }
+
+    public String stopRecording() {
+        mRecording = false;
+        mWriter.finish();
+        return mFile.getName();
+    }
+
+    public void finalizeRecording(String newFileName) {
+        mFileMan.moveFromTemp(newFileName, mFile);
+        mFile = null;
+    }
+
+    public boolean isRecording() {
+        return mRecording;
     }
 
 }

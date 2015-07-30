@@ -2,8 +2,10 @@ package com.ghsoft.barometergraph.data;
 
 import com.ghsoft.barometergraph.views.BarometerDataGraph;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -158,37 +160,26 @@ public class TransformHelper {
     static {
         Map<String, BarometerDataGraph.TransformFunction> map = new HashMap<>();
         map.put(TO_HPA.getUnit(), TO_HPA);
-        map. put(TO_PSI.getUnit(), TO_PSI);
-        map. put(TO_MPA.getUnit(), TO_MPA);
-        map. put(TO_KPA.getUnit(), TO_KPA);
-        map. put(TO_BAR.getUnit(), TO_BAR);
-        map. put(TO_ATM.getUnit(), TO_ATM);
-        map. put(TO_CMHG.getUnit(), TO_CMHG);
-        map. put(TO_MMHG.getUnit(), TO_MMHG);
-        map. put(TO_INHG.getUnit(), TO_INHG);
-        map. put(TO_CMAQ.getUnit(), TO_CMAQ);
-        map. put(TO_MMAQ.getUnit(), TO_MMAQ);
-        map. put(TO_AT.getUnit(), TO_AT);
-        map. put(TO_MSW.getUnit(), TO_MSW);
-        map. put(TO_FSW.getUnit(), TO_FSW);
+        map.put(TO_PSI.getUnit(), TO_PSI);
+        map.put(TO_MPA.getUnit(), TO_MPA);
+        map.put(TO_KPA.getUnit(), TO_KPA);
+        map.put(TO_BAR.getUnit(), TO_BAR);
+        map.put(TO_ATM.getUnit(), TO_ATM);
+        map.put(TO_CMHG.getUnit(), TO_CMHG);
+        map.put(TO_MMHG.getUnit(), TO_MMHG);
+        map.put(TO_INHG.getUnit(), TO_INHG);
+        map.put(TO_CMAQ.getUnit(), TO_CMAQ);
+        map.put(TO_MMAQ.getUnit(), TO_MMAQ);
+        map.put(TO_AT.getUnit(), TO_AT);
+        map.put(TO_MSW.getUnit(), TO_MSW);
+        map.put(TO_FSW.getUnit(), TO_FSW);
         FUNCTIONS = Collections.unmodifiableMap(map);
 
-        UNITS = new String[] {
-            TO_PSI.getUnit(),
-            TO_HPA.getUnit(),
-            TO_MPA.getUnit(),
-            TO_KPA.getUnit(),
-            TO_BAR.getUnit(),
-            TO_ATM.getUnit(),
-            TO_CMHG.getUnit(),
-            TO_MMHG.getUnit(),
-            TO_INHG.getUnit(),
-            TO_CMAQ.getUnit(),
-            TO_MMAQ.getUnit(),
-            TO_AT.getUnit(),
-            TO_MSW.getUnit(),
-            TO_FSW.getUnit()
-        };
+        List<String> units = new ArrayList<>();
+        for (String key : map.keySet()) {
+            units.add(key);
+        }
+        UNITS = units.toArray(new String[units.size()]);
 
     }
 

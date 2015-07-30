@@ -16,11 +16,13 @@ import com.ghsoft.barometergraph.data.TransformHelper;
 import com.ghsoft.barometergraph.service.BarometerDataService;
 import com.ghsoft.barometergraph.views.BarometerDataGraph;
 import com.ghsoft.barometergraph.views.DataOptions;
+import com.ghsoft.barometergraph.views.DataRecording;
 
 /**
  * Created by brian on 7/21/15.
  */
-public class LiveGraphFragment extends Fragment implements BarometerDataGraph.BarometerDataGraphCallbacks, CheckBox.OnCheckedChangeListener, DataOptions.DataOptionsEvents {
+public class LiveGraphFragment extends Fragment implements BarometerDataGraph.BarometerDataGraphCallbacks, CheckBox.OnCheckedChangeListener,
+        DataOptions.DataOptionsEvents, DataRecording.RecordingOptionsEvents {
 
     private static final String FLOAT_FORMAT = "%.4f";
 
@@ -32,6 +34,7 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     private CheckBox mAutoScroll;
     private TextView mUnitView;
     private DataOptions mDataOptions;
+    private DataRecording mDataRecording;
 
     public LiveGraphFragment() {
     }
@@ -65,6 +68,9 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
         mDataOptions = (DataOptions) v.findViewById(R.id.data_options);
         mDataOptions.setEventHandler(this);
         mDataOptions.setAutoScale(true);
+
+        mDataRecording = (DataRecording) v.findViewById(R.id.recording_expander_cont);
+        mDataRecording.setEventHandler(this);
 
         return v;
    }
@@ -119,6 +125,17 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     @Override
     public String getUnit() {
         return mService.getUnit();
+    }
+
+    @Override
+    public boolean onRecordRequest() {
+        if (mService.isRecording()) {
+            mService.stopRecording();
+            return false;
+        } else {
+            mService.startRecording(false);
+            return true;
+        }
     }
 
 }
