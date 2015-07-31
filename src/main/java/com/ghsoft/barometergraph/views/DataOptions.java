@@ -128,6 +128,16 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
         mUnitPos = (adapter).getPosition(unit);
     }
 
+    public void setDataOptionsEnabled(boolean val) {
+        mUnits.setEnabled(val);
+        mPicker.setEnabled(val);
+        if (val) {
+            mRootView.findViewById(R.id.warning_view).setVisibility(View.GONE);
+        } else {
+            mRootView.findViewById(R.id.warning_view).setVisibility(View.VISIBLE);
+        }
+    }
+
 
 
 

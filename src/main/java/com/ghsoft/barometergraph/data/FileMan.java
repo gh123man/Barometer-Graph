@@ -11,7 +11,9 @@ import java.io.IOException;
 public class FileMan {
 
     public static final String ROOT_DIR = "BarometerGraph";
+    public static final String RECORDINGS = "Recordings";
     public static final String TMP = ".tmp";
+    public static final String CSV = ".csv";
 
     private static File mSdCard;
 
@@ -23,10 +25,12 @@ public class FileMan {
         new Thread(new Runnable() {
             public void run() {
                 File dir = new File(mSdCard.getAbsolutePath() + "/" + ROOT_DIR + "/" + TMP);
-                for(File f: dir.listFiles()){
-                    f.delete();
+                if(dir.exists()) {
+                    for (File f : dir.listFiles()) {
+                        f.delete();
+                    }
+                    dir.delete();
                 }
-                dir.delete();
             }
         }).start();
     }
@@ -48,7 +52,7 @@ public class FileMan {
         }
 
         try {
-            File tmp = File.createTempFile(ROOT_DIR, "csv", dir);
+            File tmp = File.createTempFile(ROOT_DIR, CSV, dir);
             return tmp;
         } catch (IOException e) {
             //fail
@@ -58,7 +62,12 @@ public class FileMan {
     }
 
     public void moveFromTemp(String newName, File oldFile) {
-        File to = new File(mSdCard.getAbsolutePath() + "/" + newName);
+        File dir = new File(mSdCard.getAbsolutePath() + "/" + ROOT_DIR + "/" + RECORDINGS);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        File to = new File(mSdCard.getAbsolutePath() + "/" + ROOT_DIR + "/" + RECORDINGS + "/" + newName);
         oldFile.renameTo(to);
     }
 

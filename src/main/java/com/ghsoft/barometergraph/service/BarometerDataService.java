@@ -39,9 +39,6 @@ public class BarometerDataService extends Service implements SensorEventListener
     private File mFile;
     private boolean mRecording;
 
-    public interface OutputRenameHandler {
-        String onGetFileName(String oldFileName);
-    }
 
     @Override
     public void onCreate() {
@@ -75,6 +72,9 @@ public class BarometerDataService extends Service implements SensorEventListener
     }
 
     private void cleanup() {
+        if (mRecording) {
+            mWriter.finish();
+        }
         mFileMan.clearTmp();
     }
 
@@ -148,18 +148,19 @@ public class BarometerDataService extends Service implements SensorEventListener
         return value;
     }
 
-    public void startRecording(boolean clearBuffer) {
+    public void startRecording(boolean saveBuffer) {
         mFile = mFileMan.acquireTempFile();
         try {
             mWriter.setWriter(new PrintWriter(mFile));
-            mRecording = true;
 
-            if (clearBuffer) {
-                mBuffer.clear();
+
+            if (!saveBuffer) {
+                mRecording = true;
             } else {
                 for (BarometerDataPoint p : mBuffer) {
                     mWriter.writeRow(new String[] {"" + p.getmTimeStamp(), "" + p.getValue()});
                 }
+                mRecording = true;
             }
         } catch (FileNotFoundException e) {
             //fail

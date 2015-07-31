@@ -1,13 +1,16 @@
 package com.ghsoft.barometergraph.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -128,14 +131,45 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     }
 
     @Override
-    public boolean onRecordRequest() {
+    public boolean onRecordRequest(boolean keepBuffer) {
         if (mService.isRecording()) {
-            mService.stopRecording();
+            showRenameDialog(mService.stopRecording());
+            mDataOptions.setDataOptionsEnabled(true);
             return false;
         } else {
-            mService.startRecording(false);
+            mService.startRecording(keepBuffer);
+            mDataOptions.setDataOptionsEnabled(false);
             return true;
         }
+    }
+
+    @Override
+    public void onSaveRequest() {
+        mService.startRecording(true);
+        showRenameDialog(mService.stopRecording());
+    }
+
+    public void showRenameDialog(String oldname) {
+        View promptsView = mInflater.inflate(R.layout.dialog_rename_file, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                getActivity());
+
+        alertDialogBuilder.setView(promptsView);
+
+        final EditText fileName = (EditText) promptsView.findViewById(R.id.file_name);
+        fileName.setText(oldname);
+
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mService.finalizeRecording(fileName.getText().toString());
+                                dialog.dismiss();
+                            }
+                        }
+                ).create().show();
     }
 
 }

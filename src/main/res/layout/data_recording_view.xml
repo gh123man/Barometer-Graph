@@ -15,11 +15,29 @@
             android:orientation="vertical">
 
             <Button
+                android:id="@+id/stop_recording"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:text="Stop Recording"/>
+
+            <Button
                 android:id="@+id/record_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Start Recording"/>
 
+            <Button
+                android:id="@+id/save_history_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Histroy"/>
+
+            <Button
+                android:id="@+id/save_record_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Histroy + Record"/>
 
         </LinearLayout>
 

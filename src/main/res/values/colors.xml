@@ -2,7 +2,7 @@
 <resources>
 
     <color name="primaryAppColor">#33AD5C</color>
-    <color name="primaryAccent">#721D88</color>
+    <color name="primaryAccent">#33AD5C</color>
     <color name="primaryBackground">#E4E4E4</color>
 
     <color name="menuBackground">#EEEEEE</color>
@@ -19,8 +19,8 @@
     <color name="user_not_home">#38e90009</color>
 
 
-    '<color name="mid_lighter_grey2">#DDDDDD</color>
-    <color name="mid_lighter_grey">#CCCCCC</color>
+    <color name="mid_lighter_grey2">#DADADA</color>
+    <color name="mid_lighter_grey">#D0D0D0</color>
     <color name="mid_light_grey">#BBBBBB</color>
     <color name="mid_grey">#AAAAAA</color>
     <color name="mid_dark_grey">#999999</color>
@@ -37,4 +37,5 @@
     <color name="header_text_color">#555555</color>
     <color name="orig_msg_color">#333333</color>
     <color name="body_text_color">#444444</color>
+    <color name="red">#FF0000</color>
 </resources>
