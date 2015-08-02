@@ -17,10 +17,8 @@ import com.ghsoft.barometergraph.fragments.RecordingListFragment;
 import com.ghsoft.barometergraph.service.BarometerDataService;
 import com.ghsoft.barometergraph.service.BarometerServiceConnection;
 
-import java.util.Stack;
 
-
-public class Main extends ActionBarActivity implements BarometerServiceConnection.BarometerServiceEvents, LiveGraphFragment.LiveGraphFragmentEvents, View.OnClickListener {
+public class Main extends ActionBarActivity implements BarometerServiceConnection.BarometerServiceEvents, LiveGraphFragment.LiveGraphFragmentEvents, View.OnClickListener, FragmentManager.OnBackStackChangedListener {
 
 
     public static final String FRAGMENT_ID = "mContent";
@@ -29,7 +27,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
     private BarometerServiceConnection mServiceConnection;
     private FragmentManager mFragmentManager;
     private Intent mServiceIntent;
-    private Stack<Fragment> mFragStack;
+    DrawerLayout mDrawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +35,10 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         setContentView(R.layout.activity_main);
         setUpToolbar();
 
-        mFragStack = new Stack<Fragment>();
+        //mFragStack = new Stack<Fragment>();
 
         mFragmentManager = getFragmentManager();
+        mFragmentManager.addOnBackStackChangedListener(this);
         mServiceConnection = new BarometerServiceConnection(this);
         mServiceIntent = new Intent(this, BarometerDataService.class);
         startService(mServiceIntent);
@@ -48,22 +47,19 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
 
         ((Button)findViewById(R.id.open_recordings)).setOnClickListener(this);
 
-
         if (savedInstanceState == null) {
             goToMainFragment();
         }
     }
 
     private void goToMainFragment() {
-        LiveGraphFragment liveGraphFragment = new LiveGraphFragment();
-        mFragStack.push(liveGraphFragment);
-        mFragmentManager.beginTransaction().replace(getFragmentContainer(), liveGraphFragment).commit();
+        showFragment(new LiveGraphFragment());
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mFragmentManager.putFragment(outState, FRAGMENT_ID, mFragStack.peek());
+        mFragmentManager.putFragment(outState, Integer.toString(getFragmentCount() - 1), getCurrentFragment());
     }
 
     @Override
@@ -75,9 +71,8 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
     @Override
     public void onServiceConnect(BarometerDataService service) {
         mService = service;
-        Fragment current = mFragStack.peek();
-        if (current instanceof LiveGraphFragment) {
-            ((LiveGraphFragment) current).setService(mService);
+        if (getCurrentFragment() instanceof LiveGraphFragment) {
+            ((LiveGraphFragment) getCurrentFragment()).setService(mService);
         }
     }
 
@@ -93,7 +88,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle mDrawerToggle;
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,  mDrawerLayout, toolbar,
@@ -107,32 +102,62 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
 
     @Override
     public void onBackPressed() {
-
-        if (mFragStack.size() > 1) {
-            popFragment();
-        } else {
-            mFragmentManager.beginTransaction().remove(mFragStack.pop()).commit();
+        if (getCurrentFragment() instanceof LiveGraphFragment) {
+            mFragmentManager.popBackStack();
             stopService(mServiceIntent);
             mService.stopSelf();
             finish();
+        } else {
+            mFragmentManager.popBackStack();
         }
 
     }
 
-    private void popFragment() {
-        mFragmentManager.popBackStack();
-        mFragStack.pop();
-    }
 
     private void showFragment(Fragment f) {
-        mFragmentManager.beginTransaction().hide(mFragStack.peek()).add(getFragmentContainer(), f).addToBackStack(f.getClass().getName()).commit();
-        mFragStack.push(f);
+        if (getFragmentCount() == 0) {
+            mFragmentManager.beginTransaction()
+                    .add(getFragmentContainer(), f, getNewFragmentId())
+                    .addToBackStack(f.getClass().getName())
+                    .commit();
+        } else {
+            mFragmentManager.beginTransaction()
+                    .replace(getFragmentContainer(), f, getNewFragmentId())
+                    .addToBackStack(f.getClass().getName())
+                    .commit();
+        }
     }
 
     @Override
     public void onClick(View v) {
+        mDrawerLayout.closeDrawers();
         if (v.getId() == R.id.open_recordings) {
             showFragment(new RecordingListFragment());
+        }
+    }
+
+
+    protected int getFragmentCount() {
+        return mFragmentManager.getBackStackEntryCount();
+    }
+
+    private Fragment getFragmentAt(int index) {
+        return getFragmentCount() > 0 ? mFragmentManager.findFragmentByTag(Integer.toString(index)) : null;
+    }
+
+    protected Fragment getCurrentFragment() {
+        return getFragmentAt(getFragmentCount() - 1);
+    }
+
+    private String getNewFragmentId() {
+        return Integer.toString(getFragmentCount());
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        //There may be a better way to do this. 
+        if (getCurrentFragment() instanceof LiveGraphFragment && mService != null) {
+            ((LiveGraphFragment) getCurrentFragment()).setService(mService);
         }
     }
 }

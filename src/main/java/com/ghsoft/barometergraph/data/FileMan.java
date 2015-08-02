@@ -5,6 +5,8 @@ import android.os.Environment;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Created by brian on 7/30/15.
@@ -94,11 +96,18 @@ public class FileMan {
     public ArrayList<RecordingData> getFileList() {
         File dir = new File(getRecordingPath());
         ArrayList<RecordingData> dataList = new ArrayList<>();
-        if(dir.exists()) {
-            for (File f : dir.listFiles()) {
-                if (f.getName().endsWith(CSV) ) {
-                    dataList.add(new RecordingData(f));
-                }
+        if(!dir.exists()) return dataList;
+
+        File[] files = dir.listFiles();
+        Arrays.sort(files, new Comparator<File>(){
+            public int compare(File f1, File f2)
+            {
+                return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
+            }
+        });
+        for (File f : files) {
+            if (f.getName().endsWith(CSV) ) {
+                dataList.add(new RecordingData(f));
             }
         }
         return dataList;

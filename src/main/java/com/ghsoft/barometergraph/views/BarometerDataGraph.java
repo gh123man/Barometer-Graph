@@ -118,11 +118,11 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
 
         LineDataSet set = getDataSet(lineData);
 
-        if (mUseRecordingDataSet) {
-            set.setColor(Color.rgb(255, 0, 0));
-        } else {
-            set.setColor(mContext.getResources().getColor(R.color.primaryAppColor));
-        }
+//        if (mUseRecordingDataSet) {
+//            set.setColor(Color.rgb(255, 0, 0));
+//        } else {
+//            set.setColor(mContext.getResources().getColor(R.color.primaryAppColor));
+//        }
 
         addPoint(dataPoint, lineData, set);
 

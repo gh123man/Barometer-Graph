@@ -100,7 +100,7 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
         super.onSaveInstanceState(outState);
     }
 
-    private void setupChart() {
+    public void setupChart() {
         mChart = new BarometerDataGraph(getActivity(), this);
         mChartContainer.removeAllViews();
         mChartContainer.addView(mChart);

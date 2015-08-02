@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/file_name"
-        android:textSize="11pt"
+        android:textSize="9pt"
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
         android:ellipsize="end"
