@@ -12,14 +12,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.ghsoft.barometergraph.data.RecordingData;
 import com.ghsoft.barometergraph.fragments.LiveGraphFragment;
 import com.ghsoft.barometergraph.fragments.RecordingListFragment;
 import com.ghsoft.barometergraph.service.BarometerDataService;
 import com.ghsoft.barometergraph.service.BarometerServiceConnection;
+import com.ghsoft.barometergraph.views.IRecordingDataEvents;
 
 
-public class Main extends ActionBarActivity implements BarometerServiceConnection.BarometerServiceEvents, LiveGraphFragment.LiveGraphFragmentEvents, View.OnClickListener, FragmentManager.OnBackStackChangedListener {
-
+public class Main extends ActionBarActivity implements BarometerServiceConnection.BarometerServiceEvents, LiveGraphFragment.LiveGraphFragmentEvents, View.OnClickListener, FragmentManager.OnBackStackChangedListener, IRecordingDataEvents {
 
     public static final String FRAGMENT_ID = "mContent";
 
@@ -53,7 +54,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
     }
 
     private void goToMainFragment() {
-        showFragment(new LiveGraphFragment());
+        launchFragment(new LiveGraphFragment());
     }
 
     @Override
@@ -113,17 +114,16 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
 
     }
 
-
-    private void showFragment(Fragment f) {
+    public void launchFragment(Fragment fragment) {
         if (getFragmentCount() == 0) {
             mFragmentManager.beginTransaction()
-                    .add(getFragmentContainer(), f, getNewFragmentId())
-                    .addToBackStack(f.getClass().getName())
+                    .add(getFragmentContainer(), fragment, getNewFragmentId())
+                    .addToBackStack(fragment.getClass().getName())
                     .commit();
         } else {
             mFragmentManager.beginTransaction()
-                    .replace(getFragmentContainer(), f, getNewFragmentId())
-                    .addToBackStack(f.getClass().getName())
+                    .replace(getFragmentContainer(), fragment, getNewFragmentId())
+                    .addToBackStack(fragment.getClass().getName())
                     .commit();
         }
     }
@@ -132,7 +132,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
     public void onClick(View v) {
         mDrawerLayout.closeDrawers();
         if (v.getId() == R.id.open_recordings) {
-            showFragment(new RecordingListFragment());
+            launchFragment(new RecordingListFragment());
         }
     }
 
@@ -155,9 +155,15 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
 
     @Override
     public void onBackStackChanged() {
-        //There may be a better way to do this. 
+        //There may be a better way to do this.
         if (getCurrentFragment() instanceof LiveGraphFragment && mService != null) {
             ((LiveGraphFragment) getCurrentFragment()).setService(mService);
         }
     }
+
+    @Override
+    public void onViewData(RecordingData data) {
+        //launchFragment();
+    }
+
 }

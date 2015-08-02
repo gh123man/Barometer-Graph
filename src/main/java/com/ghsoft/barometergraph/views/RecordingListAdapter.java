@@ -16,11 +16,13 @@ public class RecordingListAdapter extends BaseAdapter {
 
     private ArrayList<RecordingData> mRecordingData;
     private Context mContext;
+    private IRecordingDataEvents mRecordingDataEvents;
 
 
-    public RecordingListAdapter(Context context, ArrayList<RecordingData> recordingData) {
+    public RecordingListAdapter(Context context, ArrayList<RecordingData> recordingData, IRecordingDataEvents recordingDataEvents) {
         mContext = context;
         mRecordingData = recordingData;
+        mRecordingDataEvents = recordingDataEvents;
     }
 
     @Override
@@ -40,6 +42,6 @@ public class RecordingListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return new RecordingDataListItem(mContext, getItem(position));
+        return new RecordingDataListItem(mContext, getItem(position), mRecordingDataEvents);
     }
 }

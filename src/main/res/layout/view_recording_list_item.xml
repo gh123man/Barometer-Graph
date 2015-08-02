@@ -10,16 +10,17 @@
         android:id="@+id/file_name"
         android:textSize="9pt"
         android:layout_weight="1"
-        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
         android:ellipsize="end"
         android:lines="1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"/>
 
     <ImageButton
         android:layout_gravity="center_vertical"
         android:background="@drawable/ic_menu"
         android:layout_marginLeft="10dp"
+        android:id="@+id/menu_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 

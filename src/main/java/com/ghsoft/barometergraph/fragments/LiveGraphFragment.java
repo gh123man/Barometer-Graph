@@ -59,7 +59,7 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
         try {
             mEvents = (LiveGraphFragmentEvents) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()  + " must implement LoginEvents and IGlobalEvents");
+            throw new ClassCastException(activity.toString()  + " must implement LiveGraphFragmentEvents");
         }
     }
 
