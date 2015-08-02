@@ -27,7 +27,7 @@ import java.util.LinkedList;
  */
 public class BarometerDataService extends Service implements SensorEventListener {
 
-//    private static final int BUFFER_CAP = Integer.MAX_VALUE;
+    private static final int BUFFER_CAP = 5000;
     private final BarometerDataServiceBinder mBinder = new BarometerDataServiceBinder();
     private IDataReceiver mDataReceiver;
     private LinkedList<BarometerDataPoint> mBuffer;
@@ -100,9 +100,9 @@ public class BarometerDataService extends Service implements SensorEventListener
             mWriter.writeRow(new String[] {"" + point.getmTimeStamp(), "" + point.getValue()});
         }
 
-//        if (mBuffer.size() >= BUFFER_CAP) {
-//            mBuffer.removeLast();
-//        }
+        if (mBuffer.size() >= BUFFER_CAP) {
+            mBuffer.removeLast();
+        }
     }
 
     @Override

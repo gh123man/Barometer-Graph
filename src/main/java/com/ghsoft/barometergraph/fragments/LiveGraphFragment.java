@@ -27,6 +27,8 @@ import com.ghsoft.barometergraph.views.DataRecording;
 public class LiveGraphFragment extends Fragment implements BarometerDataGraph.BarometerDataGraphCallbacks, CheckBox.OnCheckedChangeListener,
         DataOptions.DataOptionsEvents, DataRecording.RecordingOptionsEvents {
 
+    private static final String SAVE_EXPAND_RECORDING = "mDataRecording";
+    private static final String SAVE_EXPAND_DATA_OPTIONS = "mDataOptions";
     private static final String FLOAT_FORMAT = "%.4f";
 
     private BarometerDataService mService;
@@ -57,6 +59,7 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         mInflater = inflater;
         View v = mInflater.inflate(R.layout.fragment_live_graph, null);
         mChartContainer = (FrameLayout) v.findViewById(R.id.chart);
@@ -75,8 +78,20 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
         mDataRecording = (DataRecording) v.findViewById(R.id.recording_expander_cont);
         mDataRecording.setEventHandler(this);
 
+        if (savedInstanceState != null) {
+            mDataOptions.expand(savedInstanceState.getBoolean(SAVE_EXPAND_DATA_OPTIONS));
+            mDataRecording.expand(savedInstanceState.getBoolean(SAVE_EXPAND_RECORDING));
+        }
+
         return v;
-   }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(SAVE_EXPAND_DATA_OPTIONS, mDataOptions.isExpanded());
+        outState.putBoolean(SAVE_EXPAND_RECORDING, mDataRecording.isExpanded());
+        super.onSaveInstanceState(outState);
+    }
 
     private void setupChart() {
         mChart = new BarometerDataGraph(getActivity(), this);
@@ -91,6 +106,7 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
         mDataOptions.setAverageSize(mService.getAverageSize());
         mService.setDataReceiver(mChart);
         mDataOptions.setUnit(mService.getUnit());
+        setRecordState();
     }
 
     @Override
@@ -140,6 +156,16 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
             mService.startRecording(keepBuffer);
             mDataOptions.setDataOptionsEnabled(false);
             return true;
+        }
+    }
+
+    private void setRecordState() {
+        if (mService.isRecording()) {
+            mDataRecording.setRecordingState(true);
+            mDataOptions.setDataOptionsEnabled(false);
+        } else {
+            mDataRecording.setRecordingState(false);
+            mDataOptions.setDataOptionsEnabled(true);
         }
     }
 

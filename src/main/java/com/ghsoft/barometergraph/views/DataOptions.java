@@ -29,7 +29,8 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
     private CheckBox mAutoScale;
     private DataOptionsEvents mEvents;
     private Spinner mUnits;
-    private int mUnitPos;
+    private ExpanderView mExpander;
+    private String mCurrentUnit;
 
     public interface DataOptionsEvents {
         void onRunningAverageChange(int val);
@@ -53,15 +54,15 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
 
     public void setupView(Context context) {
         mContext = context;
+        mCurrentUnit = null;
         mInflater = LayoutInflater.from(context);
         mRootView = (LinearLayout) mInflater.inflate(R.layout.data_options_view, this);
 
-        ExpanderView ev = (ExpanderView)  mRootView.findViewById(R.id.expander);
-        ev.setExpandtext("Data Options");
+        mExpander= (ExpanderView)  mRootView.findViewById(R.id.expander);
+        mExpander.setExpandtext("Data Options");
 
         mUnits = (Spinner) mRootView.findViewById(R.id.unit_picker);
         mUnits.setOnItemSelectedListener(this);
-        mUnitPos = 0;
         mUnits.setAdapter(new ArrayAdapter<String>(mContext, android.R.layout.simple_list_item_1, TransformHelper.UNITS));
 
         mPicker = (NumberPicker) mRootView.findViewById(R.id.picker);
@@ -99,19 +100,20 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
-        if (mEvents != null && position != mUnitPos) {
+        final ArrayAdapter<String> adapter = ((ArrayAdapter<String>) mUnits.getAdapter());
+        if (mEvents != null && mCurrentUnit != null && !adapter.getItem(position).equals(mCurrentUnit)) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder.setMessage(mContext.getString(R.string.reset_graph_warning)).setPositiveButton(mContext.getString(R.string.yes), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     mEvents.onUnitChange(mUnits.getItemAtPosition(position).toString());
-                    mUnitPos = position;
+                    mCurrentUnit = adapter.getItem(position);
                 }
             }).setNegativeButton(mContext.getString(R.string.no), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mUnits.setSelection(mUnitPos);
+                    //mUnits.setSelection(mCurrentUnit);
                     dialog.dismiss();
                 }
             }).show();
@@ -125,8 +127,9 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
     public void setUnit(String unit) {
         ArrayAdapter<String> adapter = ((ArrayAdapter<String>) mUnits.getAdapter());
         mUnits.setSelection((adapter).getPosition(unit));
-        mUnitPos = (adapter).getPosition(unit);
+        mCurrentUnit = unit;
     }
+
 
     public void setDataOptionsEnabled(boolean val) {
         mUnits.setEnabled(val);
@@ -136,6 +139,14 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
         } else {
             mRootView.findViewById(R.id.warning_view).setVisibility(View.VISIBLE);
         }
+    }
+
+    public boolean isExpanded() {
+        return mExpander.getExpanded();
+    }
+
+    public void expand(boolean val) {
+            mExpander.expandView(val);
     }
 
 

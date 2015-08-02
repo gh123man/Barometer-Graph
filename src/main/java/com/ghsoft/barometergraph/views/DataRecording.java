@@ -20,6 +20,7 @@ public class DataRecording extends LinearLayout implements View.OnClickListener 
     private Button mRecordButton;
     private Button mSave;
     private Button mSaveRecord;
+    private ExpanderView mExpander;
     private Button mStopRecording;
 
     public interface RecordingOptionsEvents {
@@ -45,8 +46,8 @@ public class DataRecording extends LinearLayout implements View.OnClickListener 
         mInflater = LayoutInflater.from(context);
         mRootView = (LinearLayout) mInflater.inflate(R.layout.data_recording_view, this);
 
-        ExpanderView ev = (ExpanderView) mRootView.findViewById(R.id.recording_expander);
-        ev.setExpandtext("Recording");
+        mExpander = (ExpanderView) mRootView.findViewById(R.id.recording_expander);
+        mExpander.setExpandtext("Recording");
 
         mRecordButton = (Button) mRootView.findViewById(R.id.record_button);
         mRecordButton.setOnClickListener(this);
@@ -62,7 +63,7 @@ public class DataRecording extends LinearLayout implements View.OnClickListener 
 
     }
 
-    private void setRecording(boolean val) {
+    public void setRecordingState(boolean val) {
         if (val) {
             mRecordButton.setVisibility(View.GONE);
             mSave.setVisibility(View.GONE);
@@ -78,7 +79,7 @@ public class DataRecording extends LinearLayout implements View.OnClickListener 
     }
 
     private void recordRequest(boolean save) {
-        setRecording(mEvents.onRecordRequest(save));
+        setRecordingState(mEvents.onRecordRequest(save));
     }
 
     @Override
@@ -101,6 +102,14 @@ public class DataRecording extends LinearLayout implements View.OnClickListener 
                 recordRequest(false);
                 break;
         }
+    }
+
+    public boolean isExpanded() {
+        return mExpander.getExpanded();
+    }
+
+    public void expand(boolean val) {
+        mExpander.expandView(val);
     }
 
 }
