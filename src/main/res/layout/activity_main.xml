@@ -41,17 +41,14 @@
                 android:elevation="20dp"
                 android:layout_height="match_parent"
                 android:background="@color/menuBackground"
+                android:paddingTop="100dp"
                 android:orientation="vertical"
                 >
-                <TextView
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/open_recordings"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12pt"
-                    android:layout_margin="10dp"
-                    android:layout_marginBottom="20dp"
-                    android:textColor="@color/header_text_color"
-                    android:id="@+id/username_text"
-                    />
+                    android:text="open recordings"/>
             </LinearLayout>
         </android.support.v4.widget.DrawerLayout>
     </RelativeLayout>

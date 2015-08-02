@@ -1,13 +1,12 @@
 package com.ghsoft.barometergraph.views;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -20,7 +19,7 @@ import com.ghsoft.barometergraph.data.TransformHelper;
 /**
  * Created by brian on 7/28/15.
  */
-public class DataOptions extends LinearLayout implements NumberPicker.OnValueChangeListener, CompoundButton.OnCheckedChangeListener, Spinner.OnItemSelectedListener {
+public class DataOptions extends LinearLayout implements NumberPicker.OnValueChangeListener, CompoundButton.OnCheckedChangeListener, Spinner.OnItemSelectedListener, View.OnClickListener {
 
     private Context mContext;
     private LayoutInflater mInflater;
@@ -29,6 +28,7 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
     private CheckBox mAutoScale;
     private DataOptionsEvents mEvents;
     private Spinner mUnits;
+    private Button mClearButton;
     private ExpanderView mExpander;
     private String mCurrentUnit;
 
@@ -36,6 +36,7 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
         void onRunningAverageChange(int val);
         void onAutoScaleChange(boolean enable);
         void onUnitChange(String unit);
+        void onClearRequest();
     }
 
     public DataOptions(Context context) {
@@ -64,6 +65,9 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
         mUnits = (Spinner) mRootView.findViewById(R.id.unit_picker);
         mUnits.setOnItemSelectedListener(this);
         mUnits.setAdapter(new ArrayAdapter<String>(mContext, android.R.layout.simple_list_item_1, TransformHelper.UNITS));
+
+        mClearButton = (Button) mRootView.findViewById(R.id.clear_button);
+        mClearButton.setOnClickListener(this);
 
         mPicker = (NumberPicker) mRootView.findViewById(R.id.picker);
         setupPicker();
@@ -102,22 +106,7 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
     public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
         final ArrayAdapter<String> adapter = ((ArrayAdapter<String>) mUnits.getAdapter());
         if (mEvents != null && mCurrentUnit != null && !adapter.getItem(position).equals(mCurrentUnit)) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-            builder.setMessage(mContext.getString(R.string.reset_graph_warning)).setPositiveButton(mContext.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mEvents.onUnitChange(mUnits.getItemAtPosition(position).toString());
-                    mCurrentUnit = adapter.getItem(position);
-                }
-            }).setNegativeButton(mContext.getString(R.string.no), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //mUnits.setSelection(mCurrentUnit);
-                    dialog.dismiss();
-                }
-            }).show();
-
+            mEvents.onUnitChange(mUnits.getItemAtPosition(position).toString());
         }
     }
 
@@ -134,6 +123,7 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
     public void setDataOptionsEnabled(boolean val) {
         mUnits.setEnabled(val);
         mPicker.setEnabled(val);
+        mClearButton.setEnabled(val);
         if (val) {
             mRootView.findViewById(R.id.warning_view).setVisibility(View.GONE);
         } else {
@@ -149,7 +139,12 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
             mExpander.expandView(val);
     }
 
-
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.clear_button) {
+            mEvents.onClearRequest();
+        }
+    }
 
 
 }

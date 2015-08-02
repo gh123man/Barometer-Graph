@@ -4,6 +4,7 @@ import android.os.Environment;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by brian on 7/30/15.
@@ -21,10 +22,22 @@ public class FileMan {
         mSdCard = Environment.getExternalStorageDirectory();
     }
 
+    public static String getRootPath() {
+        return mSdCard.getAbsolutePath() + "/" + ROOT_DIR;
+    }
+
+    public static String getTmpPath() {
+        return getRootPath() + "/" + TMP;
+    }
+
+    public static String getRecordingPath() {
+        return getRootPath() + "/" + RECORDINGS;
+    }
+
     public static void clearTmp() {
         new Thread(new Runnable() {
             public void run() {
-                File dir = new File(mSdCard.getAbsolutePath() + "/" + ROOT_DIR + "/" + TMP);
+                File dir = new File(getTmpPath());
                 if(dir.exists()) {
                     for (File f : dir.listFiles()) {
                         f.delete();
@@ -38,7 +51,7 @@ public class FileMan {
     public static void delete(final String name) {
         new Thread(new Runnable() {
             public void run() {
-                File dir = new File(mSdCard.getAbsolutePath() + "/" + ROOT_DIR + "/" + name);
+                File dir = new File(getRootPath() + "/" + name);
                 dir.delete();
             }
         }).start();
@@ -46,7 +59,7 @@ public class FileMan {
 
     public File acquireTempFile() {
         checkDirExists();
-        File dir = new File(mSdCard.getAbsolutePath() + "/" + ROOT_DIR + "/" + TMP);
+        File dir = new File(getTmpPath());
         if (!dir.exists()) {
             dir.mkdir();
         }
@@ -62,20 +75,33 @@ public class FileMan {
     }
 
     public void moveFromTemp(String newName, File oldFile) {
-        File dir = new File(mSdCard.getAbsolutePath() + "/" + ROOT_DIR + "/" + RECORDINGS);
+        File dir = new File(getRecordingPath());
         if (!dir.exists()) {
             dir.mkdir();
         }
 
-        File to = new File(mSdCard.getAbsolutePath() + "/" + ROOT_DIR + "/" + RECORDINGS + "/" + newName);
+        File to = new File(getRecordingPath() + "/" + newName);
         oldFile.renameTo(to);
     }
 
     private void checkDirExists() {
-        File dir = new File(mSdCard.getAbsolutePath() + "/" + ROOT_DIR);
+        File dir = new File(getRootPath());
         if (!dir.exists()) {
             dir.mkdir();
         }
+    }
+
+    public ArrayList<RecordingData> getFileList() {
+        File dir = new File(getRecordingPath());
+        ArrayList<RecordingData> dataList = new ArrayList<>();
+        if(dir.exists()) {
+            for (File f : dir.listFiles()) {
+                if (f.getName().endsWith(CSV) ) {
+                    dataList.add(new RecordingData(f));
+                }
+            }
+        }
+        return dataList;
     }
 
 }

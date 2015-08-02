@@ -3,6 +3,7 @@ package com.ghsoft.barometergraph.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,6 +21,10 @@ import com.ghsoft.barometergraph.service.BarometerDataService;
 import com.ghsoft.barometergraph.views.BarometerDataGraph;
 import com.ghsoft.barometergraph.views.DataOptions;
 import com.ghsoft.barometergraph.views.DataRecording;
+import com.ghsoft.barometergraph.views.DialogHelper;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by brian on 7/21/15.
@@ -40,6 +45,7 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     private TextView mUnitView;
     private DataOptions mDataOptions;
     private DataRecording mDataRecording;
+    private Context mContext;
 
     public LiveGraphFragment() {
     }
@@ -60,6 +66,7 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        mContext = getActivity();
         mInflater = inflater;
         View v = mInflater.inflate(R.layout.fragment_live_graph, null);
         mChartContainer = (FrameLayout) v.findViewById(R.id.chart);
@@ -120,10 +127,22 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     }
 
     @Override
-    public void onUnitChange(String unit) {
-        mService.setTransformFunction(TransformHelper.fromUnit(unit));
-        setupChart();
-        mService.setDataReceiver(mChart);
+    public void onUnitChange(final String unit) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage(mContext.getString(R.string.reset_graph_warning)).setPositiveButton(mContext.getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mService.clear();
+                mService.setTransformFunction(TransformHelper.fromUnit(unit));
+                setupChart();
+                mService.setDataReceiver(mChart);
+            }
+        }).setNegativeButton(mContext.getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).show();
     }
 
     @Override
@@ -149,10 +168,12 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     @Override
     public boolean onRecordRequest(boolean keepBuffer) {
         if (mService.isRecording()) {
+            mChart.useRecordingDataSet(false);
             showRenameDialog(mService.stopRecording());
             mDataOptions.setDataOptionsEnabled(true);
             return false;
         } else {
+            mChart.useRecordingDataSet(true);
             mService.startRecording(keepBuffer);
             mDataOptions.setDataOptionsEnabled(false);
             return true;
@@ -176,26 +197,41 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     }
 
     public void showRenameDialog(String oldname) {
-        View promptsView = mInflater.inflate(R.layout.dialog_rename_file, null);
+        View v = mInflater.inflate(R.layout.dialog_rename_file, null);
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                getActivity());
+        final EditText fileName = (EditText) v.findViewById(R.id.file_name);
 
-        alertDialogBuilder.setView(promptsView);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss");
+        String tempName = sdf.format(new Date());
 
-        final EditText fileName = (EditText) promptsView.findViewById(R.id.file_name);
-        fileName.setText(oldname);
+        fileName.setText("Recording_" + tempName);
 
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                mService.finalizeRecording(fileName.getText().toString());
-                                dialog.dismiss();
-                            }
-                        }
-                ).create().show();
+        DialogHelper.showViewButtonDialog(mContext, v, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                mService.finalizeRecording(fileName.getText().toString() + ".csv");
+                dialog.dismiss();
+            }
+        });
+    }
+
+    @Override
+    public void onClearRequest() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage(mContext.getString(R.string.clear_graph_warning)).setPositiveButton(mContext.getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mService.clear();
+                setupChart();
+                mService.setDataReceiver(mChart);
+            }
+        }).setNegativeButton(mContext.getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).show();
+
+
     }
 
 }

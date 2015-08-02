@@ -7,6 +7,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <string name="reset_graph_warning">Changing the unit will reset the graph and all buffered data. Are you sure?</string>
+    <string name="reset_graph_warning">Changing the unit will reset the graph and clear its history. Are you sure?</string>
+    <string name="clear_graph_warning">Clearing the graph cannot be undone, Are you sure?</string>
 
 </resources>

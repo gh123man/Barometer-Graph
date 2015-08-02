@@ -13,7 +13,6 @@ import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ValueFormatter;
 
 import java.text.SimpleDateFormat;
@@ -31,6 +30,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
     private boolean mLockAutoScroll;
     private BarometerDataGraphCallbacks mCallbacks;
     private Context mContext;
+    private boolean mUseRecordingDataSet;
 
     public interface BarometerDataGraphCallbacks {
         void onAutoScrollChanged(boolean val);
@@ -46,6 +46,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
     public BarometerDataGraph(Context context, BarometerDataGraphCallbacks callbacks) {
         super(context);
         mCallbacks = callbacks;
+        mUseRecordingDataSet = false;
         setupView(context);
     }
 
@@ -105,6 +106,10 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         }
     }
 
+    public void useRecordingDataSet(boolean val) {
+        mUseRecordingDataSet = val;
+    }
+
     @Override
     public void write(BarometerDataPoint dataPoint) {
         LineData lineData = getData();
@@ -112,6 +117,12 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         if (lineData == null) return;
 
         LineDataSet set = getDataSet(lineData);
+
+        if (mUseRecordingDataSet) {
+            set.setColor(Color.rgb(255, 0, 0));
+        } else {
+            set.setColor(mContext.getResources().getColor(R.color.primaryAppColor));
+        }
 
         addPoint(dataPoint, lineData, set);
 
@@ -153,8 +164,6 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         set.setColor(mContext.getResources().getColor(R.color.primaryAppColor));
         set.setLineWidth(2f);
         set.setDrawCircles(false);
-        set.setFillAlpha(65);
-        set.setFillColor(ColorTemplate.getHoloBlue());
         set.setHighLightColor(Color.rgb(244, 117, 117));
         set.setValueTextColor(Color.WHITE);
         set.setValueTextSize(9f);

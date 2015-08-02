@@ -8,6 +8,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.ghsoft.barometergraph.data.BarometerDataPoint;
 import com.ghsoft.barometergraph.data.CSVWriter;
@@ -133,9 +134,12 @@ public class BarometerDataService extends Service implements SensorEventListener
     }
 
     public void setTransformFunction(BarometerDataGraph.TransformFunction transform) {
+        mTransform = transform;
+    }
+
+    public void clear() {
         mBuffer.clear();
         mAverager.clear();
-        mTransform = transform;
     }
 
     public String getUnit() {
@@ -175,6 +179,7 @@ public class BarometerDataService extends Service implements SensorEventListener
 
     public void finalizeRecording(String newFileName) {
         mFileMan.moveFromTemp(newFileName, mFile);
+        Log.e("moving " + newFileName, "moving" + mFile.getName());
         mFile = null;
     }
 
