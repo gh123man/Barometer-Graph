@@ -145,8 +145,8 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
             addPoint(dataPoint, lineData, set);
         }
 
-        notifyDataSetChanged();
         scrollToFront(lineData);
+        notifyDataSetChanged();
     }
 
     private void addPoint(BarometerDataPoint dataPoint, LineData lineData, DataSet set) {

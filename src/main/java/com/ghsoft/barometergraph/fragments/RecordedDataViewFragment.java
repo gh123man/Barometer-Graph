@@ -2,6 +2,7 @@ package com.ghsoft.barometergraph.fragments;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -44,14 +45,14 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
         mInflater = inflater;
         View v = mInflater.inflate(R.layout.fragment_recorded_data, null);
         mChartContainer = (FrameLayout) v.findViewById(R.id.recorded_chart);
-        setupChart();
-        try {
-            mChart.writeHistory(mData.getData());
-        } catch (IOException e) {
-            //error
-        }
+
+        new ParseFileHandler(this).execute();
 
         return v;
+    }
+
+    public RecordingData getData() {
+        return mData;
     }
 
     @Override
@@ -65,6 +66,7 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
         mChartContainer.addView(mChart);
         mChart.notifyDataSetChanged();
         mChart.invalidate();
+        mChart.writeHistory(mData.getData());
     }
 
 
@@ -79,5 +81,30 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
     @Override
     public String getUnit() {
         return null;
+    }
+
+    public class ParseFileHandler extends AsyncTask<RecordingData, Integer, Integer> {
+
+        private RecordedDataViewFragment mRecordedDataViewFragment;
+
+        public ParseFileHandler (RecordedDataViewFragment fragmnet) {
+            mRecordedDataViewFragment = fragmnet;
+        }
+
+
+        @Override
+        protected Integer doInBackground(RecordingData... params) {
+            try {
+                mRecordedDataViewFragment.getData().parseFile();
+            } catch (IOException e) {
+
+            }
+            return 0;
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            mRecordedDataViewFragment.setupChart();
+        }
     }
 }

@@ -1,9 +1,11 @@
 package com.ghsoft.barometergraph.data;
 
+import java.io.Serializable;
+
 /**
  * Created by brian on 7/24/15.
  */
-public class BarometerDataPoint {
+public class BarometerDataPoint implements Serializable {
 
     private final float mValue;
     private final long mTimeStamp;

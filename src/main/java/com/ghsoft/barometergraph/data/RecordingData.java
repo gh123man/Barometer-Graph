@@ -24,7 +24,7 @@ public class RecordingData implements Serializable {
         return mFile.getName().substring(0, mFile.getName().length() - 4);
     }
 
-    private void parseFile() throws IOException{
+    public void parseFile() throws IOException{
         // Construct BufferedReader from FileReader
         BufferedReader br = new BufferedReader(new FileReader(mFile));
         mData = new LinkedList<>();
@@ -38,10 +38,7 @@ public class RecordingData implements Serializable {
         br.close();
     }
 
-    public LinkedList<BarometerDataPoint> getData() throws IOException{
-        if (mData == null)  {
-            parseFile();
-        }
+    public LinkedList<BarometerDataPoint> getData() {
         return mData;
     }
 
