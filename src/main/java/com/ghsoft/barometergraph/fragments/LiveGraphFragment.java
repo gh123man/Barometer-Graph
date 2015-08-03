@@ -232,8 +232,6 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
                 dialog.dismiss();
             }
         }).show();
-
-
     }
 
 }

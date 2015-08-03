@@ -21,7 +21,9 @@ import com.ghsoft.barometergraph.service.BarometerServiceConnection;
 import com.ghsoft.barometergraph.views.IRecordingDataEvents;
 
 
-public class Main extends ActionBarActivity implements BarometerServiceConnection.BarometerServiceEvents, LiveGraphFragment.LiveGraphFragmentEvents, View.OnClickListener, FragmentManager.OnBackStackChangedListener, IRecordingDataEvents {
+public class Main extends ActionBarActivity implements BarometerServiceConnection.BarometerServiceEvents,
+        LiveGraphFragment.LiveGraphFragmentEvents, View.OnClickListener, FragmentManager.OnBackStackChangedListener,
+        IRecordingDataEvents, RecordedDataViewFragment.RecordedDataFragmentEvents {
 
     public static final String FRAGMENT_ID = "mContent";
 
@@ -160,6 +162,10 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         if (getCurrentFragment() instanceof LiveGraphFragment && mService != null) {
             ((LiveGraphFragment) getCurrentFragment()).setService(mService);
         }
+
+        if (getCurrentFragment() instanceof RecordingListFragment) {
+            ((RecordingListFragment) getCurrentFragment()).referesh();
+        }
     }
 
     @Override
@@ -171,4 +177,9 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         launchFragment(recordedDataViewFragment);
     }
 
+    @Override
+    public void onDelete() {
+        mFragmentManager.popBackStack();
+
+    }
 }

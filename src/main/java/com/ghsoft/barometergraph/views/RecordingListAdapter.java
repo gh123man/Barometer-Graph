@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.ghsoft.barometergraph.data.FileMan;
 import com.ghsoft.barometergraph.data.RecordingData;
 
 import java.util.ArrayList;
@@ -12,17 +13,29 @@ import java.util.ArrayList;
 /**
  * Created by brian on 8/2/15.
  */
-public class RecordingListAdapter extends BaseAdapter {
+public class RecordingListAdapter extends BaseAdapter implements RecordingDataListItem.DataListItemEvents {
 
     private ArrayList<RecordingData> mRecordingData;
     private Context mContext;
     private IRecordingDataEvents mRecordingDataEvents;
+    private FileMan mFileManager;
 
 
-    public RecordingListAdapter(Context context, ArrayList<RecordingData> recordingData, IRecordingDataEvents recordingDataEvents) {
+    public RecordingListAdapter(Context context, IRecordingDataEvents recordingDataEvents) {
         mContext = context;
-        mRecordingData = recordingData;
         mRecordingDataEvents = recordingDataEvents;
+
+        mFileManager = new FileMan();
+        mRecordingData = mFileManager.getFileList();
+    }
+
+    public void refresh() {
+        mRecordingData = mFileManager.getFileList();
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<RecordingData> getData() {
+        return mRecordingData;
     }
 
     @Override
@@ -42,6 +55,11 @@ public class RecordingListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return new RecordingDataListItem(mContext, getItem(position), mRecordingDataEvents);
+        return new RecordingDataListItem(mContext, getItem(position), mRecordingDataEvents, this);
+    }
+
+    @Override
+    public void onDelete() {
+        refresh();
     }
 }

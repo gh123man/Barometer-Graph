@@ -1,6 +1,8 @@
 package com.ghsoft.barometergraph.views;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -22,11 +24,17 @@ public class RecordingDataListItem extends LinearLayout implements View.OnClickL
     private Context mContext;
     private View mRootView;
     private IRecordingDataEvents mRecordingDataEvents;
+    private DataListItemEvents mDataListItemEvents;
 
-    public RecordingDataListItem(Context context, RecordingData recordingData, IRecordingDataEvents recordingDataEvents) {
+    public interface  DataListItemEvents {
+        void onDelete();
+    }
+
+    public RecordingDataListItem(Context context, RecordingData recordingData, IRecordingDataEvents recordingDataEvents, DataListItemEvents events) {
         super(context);
         mRecordingData = recordingData;
         mRecordingDataEvents = recordingDataEvents;
+        mDataListItemEvents = events;
         setupView(context);
     }
 
@@ -73,9 +81,26 @@ public class RecordingDataListItem extends LinearLayout implements View.OnClickL
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete_recording:
+                onDeleteData();
                 return true;
 
         }
         return false;
+    }
+
+    public void onDeleteData() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage(mContext.getString(R.string.are_you_sure)).setPositiveButton(mContext.getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mRecordingData.delete();
+                mDataListItemEvents.onDelete();
+            }
+        }).setNegativeButton(mContext.getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).show();
     }
 }

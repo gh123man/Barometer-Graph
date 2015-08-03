@@ -6,12 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 
-import com.ghsoft.barometergraph.data.FileMan;
-import com.ghsoft.barometergraph.data.RecordingData;
 import com.ghsoft.barometergraph.views.IRecordingDataEvents;
 import com.ghsoft.barometergraph.views.RecordingListAdapter;
-
-import java.util.ArrayList;
 
 /**
  * Created by brian on 8/2/15.
@@ -19,6 +15,7 @@ import java.util.ArrayList;
 public class RecordingListFragment extends ListFragment {
 
     private IRecordingDataEvents mRecordingDataEvents;
+    private RecordingListAdapter mAdapter;
 
     @Override
     public void onAttach(Activity activity) {
@@ -36,9 +33,13 @@ public class RecordingListFragment extends ListFragment {
 
         ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Recorded Data");
 
-        FileMan fm = new FileMan();
-        ArrayList<RecordingData> dataList = fm.getFileList();
 
-        setListAdapter(new RecordingListAdapter(getActivity(), dataList, mRecordingDataEvents));
+
+        mAdapter = new RecordingListAdapter(getActivity(), mRecordingDataEvents);
+        setListAdapter(mAdapter);
+    }
+
+    public void referesh() {
+        mAdapter.refresh();
     }
 }

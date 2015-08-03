@@ -1,7 +1,10 @@
 package com.ghsoft.barometergraph.fragments;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -19,7 +22,7 @@ import java.io.IOException;
 /**
  * Created by brian on 7/21/15.
  */
-public class RecordedDataViewFragment extends Fragment implements BarometerDataGraph.BarometerDataGraphCallbacks {
+public class RecordedDataViewFragment extends Fragment implements BarometerDataGraph.BarometerDataGraphCallbacks, View.OnClickListener {
 
 
     public static final String PACKAGE_DATA_KEY = "graph_data";
@@ -29,9 +32,24 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
     private BarometerDataGraph mChart;
     private RecordingData mData;
     private Context mContext;
+    private RecordedDataFragmentEvents mEvents;
+
+    public interface RecordedDataFragmentEvents {
+        void onDelete();
+    }
 
 
     public RecordedDataViewFragment() {
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mEvents = (RecordedDataFragmentEvents) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()  + " must implement NavigaitonEvents");
+        }
     }
 
     @Override
@@ -45,6 +63,9 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
         mInflater = inflater;
         View v = mInflater.inflate(R.layout.fragment_recorded_data, null);
         mChartContainer = (FrameLayout) v.findViewById(R.id.recorded_chart);
+
+        v.findViewById(R.id.share_recording).setOnClickListener(this);
+        v.findViewById(R.id.delete_recording).setOnClickListener(this);
 
         new ParseFileHandler(this).execute();
 
@@ -106,5 +127,32 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
         protected void onPostExecute(Integer integer) {
             mRecordedDataViewFragment.setupChart();
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.delete_recording:
+                onDeleteData();;
+                break;
+            case R.id.share_recording:
+                break;
+        }
+    }
+
+    public void onDeleteData() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage(mContext.getString(R.string.are_you_sure)).setPositiveButton(mContext.getString(R.string.yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mData.delete();
+                mEvents.onDelete();
+            }
+        }).setNegativeButton(mContext.getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).show();
     }
 }
