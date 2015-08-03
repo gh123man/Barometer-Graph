@@ -95,8 +95,10 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(SAVE_EXPAND_DATA_OPTIONS, mDataOptions.isExpanded());
-        outState.putBoolean(SAVE_EXPAND_RECORDING, mDataRecording.isExpanded());
+        if (mDataOptions != null && mDataRecording != null ) {
+            outState.putBoolean(SAVE_EXPAND_DATA_OPTIONS, mDataOptions.isExpanded());
+            outState.putBoolean(SAVE_EXPAND_RECORDING, mDataRecording.isExpanded());
+        }
         super.onSaveInstanceState(outState);
     }
 

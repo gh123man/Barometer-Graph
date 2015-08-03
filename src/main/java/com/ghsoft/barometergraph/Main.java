@@ -14,6 +14,7 @@ import android.widget.Button;
 
 import com.ghsoft.barometergraph.data.RecordingData;
 import com.ghsoft.barometergraph.fragments.LiveGraphFragment;
+import com.ghsoft.barometergraph.fragments.RecordedDataViewFragment;
 import com.ghsoft.barometergraph.fragments.RecordingListFragment;
 import com.ghsoft.barometergraph.service.BarometerDataService;
 import com.ghsoft.barometergraph.service.BarometerServiceConnection;
@@ -163,7 +164,11 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
 
     @Override
     public void onViewData(RecordingData data) {
-        //launchFragment();
+        RecordedDataViewFragment recordedDataViewFragment = new RecordedDataViewFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(RecordedDataViewFragment.PACKAGE_DATA_KEY, data);
+        recordedDataViewFragment.setArguments(bundle);
+        launchFragment(recordedDataViewFragment);
     }
 
 }
