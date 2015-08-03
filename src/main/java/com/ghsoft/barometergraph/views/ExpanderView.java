@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,9 +17,10 @@ import com.ghsoft.barometergraph.R;
 public class ExpanderView extends LinearLayout implements View.OnClickListener {
 
     private LinearLayout mRootView, mContentView;
-    private FrameLayout mExpandButton;
+    private View mExpandButton;
     private LayoutInflater mInflater;
     private OnExpandListener mListener;
+    private ImageView mImage1, mImage2;
     private String mText;
     private boolean mExpanded;
 
@@ -43,8 +44,10 @@ public class ExpanderView extends LinearLayout implements View.OnClickListener {
         mInflater = LayoutInflater.from(context);
         mRootView = (LinearLayout) mInflater.inflate(R.layout.expander_view, this);
 
-        mExpandButton = (FrameLayout) mRootView.findViewById(R.id.expand_button);
+        mExpandButton = mRootView.findViewById(R.id.expand_button);
         mExpandButton.setOnClickListener(this);
+        mImage1 = (ImageView) mRootView.findViewById(R.id.image_1);
+        mImage2 = (ImageView) mRootView.findViewById(R.id.image_2);
 
         mContentView = (LinearLayout) mRootView.findViewById(R.id.content);
 
@@ -87,15 +90,15 @@ public class ExpanderView extends LinearLayout implements View.OnClickListener {
     }
 
     private void setExpandButton() {
-        mExpandButton.removeAllViews();
-        mExpandButton.addView(mInflater.inflate(R.layout.expand_button_down, null));
-        ((TextView) mExpandButton.findViewById(R.id.expand_down)).setText(mText);
+        ((TextView) mExpandButton.findViewById(R.id.expand_text)).setText(mText);
+        mImage1.setImageResource(R.drawable.ic_down_arrow);
+        mImage2.setImageResource(R.drawable.ic_down_arrow);
     }
 
     private void setUnExpandButton() {
-        mExpandButton.removeAllViews();
-        mExpandButton.addView(mInflater.inflate(R.layout.expand_button_up, null));
-        ((TextView) mExpandButton.findViewById(R.id.expand_up)).setText(mText);
+        ((TextView) mExpandButton.findViewById(R.id.expand_text)).setText(mText);
+        mImage1.setImageResource(R.drawable.ic_up_arrow);
+        mImage2.setImageResource(R.drawable.ic_up_arrow);
     }
 
     @Override

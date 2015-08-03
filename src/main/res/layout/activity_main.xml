@@ -42,12 +42,12 @@
                 android:elevation="20dp"
                 android:layout_height="match_parent"
                 android:background="@color/menuBackground"
-                android:paddingTop="100dp"
                 android:orientation="vertical"
                 >
                 <Button
                     android:id="@+id/open_recordings"
-                    android:layout_width="wrap_content"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="open recordings"/>
             </LinearLayout>

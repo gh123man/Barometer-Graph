@@ -34,7 +34,6 @@
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:padding="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/card_drawable"
@@ -44,7 +43,8 @@
 
                 <LinearLayout
                     android:orientation="horizontal"
-                    android:background="@android:color/white"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:clickable="true"
                     android:id="@+id/share_recording"
                     android:gravity="center"
                     android:layout_width="match_parent"
@@ -73,7 +73,8 @@
                     android:orientation="horizontal"
                     android:id="@+id/delete_recording"
                     android:gravity="center"
-                    android:background="@android:color/white"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:clickable="true"
                     android:layout_width="match_parent"
                     android:layout_weight="1"
                     android:layout_height="match_parent">
