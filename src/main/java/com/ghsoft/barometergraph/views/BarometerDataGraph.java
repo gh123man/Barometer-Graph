@@ -73,6 +73,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         getAxisRight().setStartAtZero(false);
         getAxisRight().setDrawLabels(false);
         getAxisLeft().setStartAtZero(false);
+        setDrawGridBackground(false);
         getAxisLeft().setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float v) {
