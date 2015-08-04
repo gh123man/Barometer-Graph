@@ -46,4 +46,8 @@ public class RecordingData implements Serializable {
         mFile.delete();
     }
 
+    public File getFile() {
+        return mFile;
+    }
+
 }

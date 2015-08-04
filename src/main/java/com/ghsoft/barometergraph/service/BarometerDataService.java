@@ -178,7 +178,7 @@ public class BarometerDataService extends Service implements SensorEventListener
     }
 
     public void finalizeRecording(String newFileName) {
-        mFileMan.moveFromTemp(newFileName, mFile);
+        mFileMan.rename(newFileName, mFile);
         Log.e("moving " + newFileName, "moving" + mFile.getName());
         mFile = null;
     }

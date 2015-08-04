@@ -4,6 +4,7 @@
     <string name="app_name">Barometer Graph</string>
     <string name="hello_world">Hello world!</string>
     <string name="delete_recording">Delete</string>
+    <string name="rename">Rename</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 

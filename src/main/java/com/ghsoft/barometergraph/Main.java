@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.ghsoft.barometergraph.data.RecordingData;
 import com.ghsoft.barometergraph.fragments.LiveGraphFragment;
@@ -49,7 +48,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         bindService(mServiceIntent, mServiceConnection, 0);
         Log.e("BINDING", "BINDING");
 
-        ((Button)findViewById(R.id.open_recordings)).setOnClickListener(this);
+        findViewById(R.id.open_recordings).setOnClickListener(this);
 
         if (savedInstanceState == null) {
             goToMainFragment();
@@ -161,10 +160,16 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         //There may be a better way to do this.
         if (getCurrentFragment() instanceof LiveGraphFragment && mService != null) {
             ((LiveGraphFragment) getCurrentFragment()).setService(mService);
+            getSupportActionBar().setTitle("Barometer Graph");
         }
 
         if (getCurrentFragment() instanceof RecordingListFragment) {
             ((RecordingListFragment) getCurrentFragment()).referesh();
+            getSupportActionBar().setTitle("Recorded Data");
+        }
+
+        if (getCurrentFragment() instanceof RecordedDataViewFragment) {
+            getSupportActionBar().setTitle(((RecordedDataViewFragment) getCurrentFragment()).getFileName());
         }
     }
 

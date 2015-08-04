@@ -76,7 +76,7 @@ public class FileMan {
 
     }
 
-    public void moveFromTemp(String newName, File oldFile) {
+    public void rename(String newName, File oldFile) {
         File dir = new File(getRecordingPath());
         if (!dir.exists()) {
             dir.mkdir();

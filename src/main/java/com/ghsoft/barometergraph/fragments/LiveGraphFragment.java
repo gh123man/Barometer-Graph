@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -16,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.ghsoft.barometergraph.R;
+import com.ghsoft.barometergraph.data.CSVFileNameSanitizer;
 import com.ghsoft.barometergraph.data.TransformHelper;
 import com.ghsoft.barometergraph.service.BarometerDataService;
 import com.ghsoft.barometergraph.views.BarometerDataGraph;
@@ -208,9 +210,11 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
 
         fileName.setText("Recording_" + tempName);
 
-        DialogHelper.showViewButtonDialog(mContext, v, new DialogInterface.OnClickListener() {
+        ((InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(fileName, InputMethodManager.SHOW_FORCED);
+
+        DialogHelper.showEditDialog(mContext, v, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                mService.finalizeRecording(fileName.getText().toString() + ".csv");
+                mService.finalizeRecording(CSVFileNameSanitizer.sanitize(fileName.getText().toString()));
                 dialog.dismiss();
             }
         });

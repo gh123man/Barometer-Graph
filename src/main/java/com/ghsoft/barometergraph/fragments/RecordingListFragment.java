@@ -3,7 +3,6 @@ package com.ghsoft.barometergraph.fragments;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 
 import com.ghsoft.barometergraph.views.IRecordingDataEvents;
@@ -23,17 +22,13 @@ public class RecordingListFragment extends ListFragment {
         try {
             mRecordingDataEvents = (IRecordingDataEvents) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()  + " must implement NavigaitonEvents");
+            throw new ClassCastException(activity.toString()  + " must implement IRecordingDataEvents");
         }
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle("Recorded Data");
-
-
 
         mAdapter = new RecordingListAdapter(getActivity(), mRecordingDataEvents);
         setListAdapter(mAdapter);

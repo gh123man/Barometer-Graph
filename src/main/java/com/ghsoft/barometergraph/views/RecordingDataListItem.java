@@ -7,17 +7,20 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.ghsoft.barometergraph.R;
+import com.ghsoft.barometergraph.data.CSVFileNameSanitizer;
+import com.ghsoft.barometergraph.data.FileMan;
 import com.ghsoft.barometergraph.data.RecordingData;
 
 /**
  * Created by brian on 8/2/15.
  */
-public class RecordingDataListItem extends LinearLayout implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
+public class RecordingDataListItem extends LinearLayout implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, DialogInterface.OnClickListener {
 
     private RecordingData mRecordingData;
     private LayoutInflater mInflater;
@@ -28,6 +31,7 @@ public class RecordingDataListItem extends LinearLayout implements View.OnClickL
 
     public interface  DataListItemEvents {
         void onDelete();
+        void onRename();
     }
 
     public RecordingDataListItem(Context context, RecordingData recordingData, IRecordingDataEvents recordingDataEvents, DataListItemEvents events) {
@@ -70,6 +74,15 @@ public class RecordingDataListItem extends LinearLayout implements View.OnClickL
         }
     }
 
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        String filename = ((EditText) ((AlertDialog) dialog).findViewById(R.id.file_name)).getText().toString();
+        FileMan fm = new FileMan();
+        fm.rename(CSVFileNameSanitizer.sanitize(filename), mRecordingData.getFile());
+        mDataListItemEvents.onRename();
+
+    }
+
     public void popContextMenu(View v) {
         PopupMenu popup = new PopupMenu(mContext, v);
         popup.getMenuInflater().inflate(R.menu.menu_record_options, popup.getMenu());
@@ -80,6 +93,13 @@ public class RecordingDataListItem extends LinearLayout implements View.OnClickL
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.rename_recording:
+                View v = mInflater.inflate(R.layout.dialog_rename_file, null);
+                final EditText fileName = (EditText) v.findViewById(R.id.file_name);
+                fileName.setText(mRecordingData.getName());
+                DialogHelper.showEditDialog(mContext, v, this);
+                return true;
+
             case R.id.delete_recording:
                 onDeleteData();
                 return true;

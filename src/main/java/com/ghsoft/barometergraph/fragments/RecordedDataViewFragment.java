@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,8 +55,6 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mData = (RecordingData) getArguments().getSerializable(PACKAGE_DATA_KEY);
-
-        ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle(mData.getName());
 
         mContext = getActivity();
         mInflater = inflater;
@@ -154,5 +151,9 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
                 dialog.dismiss();
             }
         }).show();
+    }
+
+    public String getFileName() {
+        return mData.getName();
     }
 }

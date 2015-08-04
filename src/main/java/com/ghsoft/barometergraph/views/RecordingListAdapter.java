@@ -62,4 +62,9 @@ public class RecordingListAdapter extends BaseAdapter implements RecordingDataLi
     public void onDelete() {
         refresh();
     }
+
+    @Override
+    public void onRename() {
+        refresh();
+    }
 }
