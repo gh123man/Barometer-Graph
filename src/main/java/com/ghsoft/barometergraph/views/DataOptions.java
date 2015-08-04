@@ -107,6 +107,7 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
         final ArrayAdapter<String> adapter = ((ArrayAdapter<String>) mUnits.getAdapter());
         if (mEvents != null && mCurrentUnit != null && !adapter.getItem(position).equals(mCurrentUnit)) {
             mEvents.onUnitChange(mUnits.getItemAtPosition(position).toString());
+            mCurrentUnit = adapter.getItem(position);
         }
     }
 
