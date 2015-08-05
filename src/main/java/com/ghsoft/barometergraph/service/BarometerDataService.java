@@ -39,7 +39,7 @@ public class BarometerDataService extends Service implements SensorEventListener
     private FileMan mFileMan;
     private CSVWriter mWriter;
     private File mFile;
-    private boolean mRecording;
+    private boolean mRecording, mHasSensor;
     private ISettingsProvider mSettings;
 
     @Override
@@ -47,12 +47,16 @@ public class BarometerDataService extends Service implements SensorEventListener
         super.onCreate();
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        mHasSensor = mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
         mFileMan = new FileMan();
         mBuffer = new LinkedList<>();
         mWriter = new CSVWriter();
         mFile = null;
         mRecording = false;
+    }
+
+    public boolean hasSensor() {
+        return mHasSensor;
     }
 
     public void setSettings(ISettingsProvider settings) {

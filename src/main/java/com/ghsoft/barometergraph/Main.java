@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.ghsoft.barometergraph.data.RecordingData;
 import com.ghsoft.barometergraph.fragments.LiveGraphFragment;
+import com.ghsoft.barometergraph.fragments.NoSensorFragment;
 import com.ghsoft.barometergraph.fragments.RecordedDataViewFragment;
 import com.ghsoft.barometergraph.fragments.RecordingListFragment;
 import com.ghsoft.barometergraph.service.BarometerDataService;
@@ -74,9 +75,14 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
     @Override
     public void onServiceConnect(BarometerDataService service) {
         mService = service;
-        mService.setSettings(mSettings);
-        if (getCurrentFragment() instanceof LiveGraphFragment) {
-            ((LiveGraphFragment) getCurrentFragment()).setService(mService);
+        if (mService.hasSensor()) {
+            mService.setSettings(mSettings);
+            if (getCurrentFragment() instanceof LiveGraphFragment) {
+                ((LiveGraphFragment) getCurrentFragment()).setService(mService);
+            }
+        } else {
+            mFragmentManager.popBackStack();
+            launchFragment(new NoSensorFragment());
         }
     }
 
