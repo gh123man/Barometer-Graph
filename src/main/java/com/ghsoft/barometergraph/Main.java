@@ -75,13 +75,14 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
     @Override
     public void onServiceConnect(BarometerDataService service) {
         mService = service;
+        mService.setSettings(mSettings);
         if (mService.hasSensor()) {
-            mService.setSettings(mSettings);
             if (getCurrentFragment() instanceof LiveGraphFragment) {
                 ((LiveGraphFragment) getCurrentFragment()).setService(mService);
             }
         } else {
-            mFragmentManager.popBackStack();
+            mFragmentManager.popBackStackImmediate();
+            getSupportActionBar().setElevation(0f);
             launchFragment(new NoSensorFragment());
         }
     }
@@ -112,14 +113,12 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
 
     @Override
     public void onBackPressed() {
-        if (getCurrentFragment() instanceof LiveGraphFragment) {
-            mFragmentManager.popBackStack();
+        if (mFragmentManager.getBackStackEntryCount() == 1) {
             stopService(mServiceIntent);
-            mService.stopSelf();
             finish();
-        } else {
-            mFragmentManager.popBackStack();
+            return;
         }
+        mFragmentManager.popBackStack();
 
     }
 
@@ -164,7 +163,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
 
     @Override
     public void onBackStackChanged() {
-        //There may be a better way to do this.
+
         if (getCurrentFragment() instanceof LiveGraphFragment && mService != null) {
             ((LiveGraphFragment) getCurrentFragment()).setService(mService);
             getSupportActionBar().setTitle("Barometer Graph");

@@ -15,7 +15,7 @@ public class NoSensorFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_recorded_data, null);
+        View v = inflater.inflate(R.layout.fragment_no_sensor, null);
         return v;
     }
 
