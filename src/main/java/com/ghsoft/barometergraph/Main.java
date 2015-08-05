@@ -133,10 +133,10 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
 
     @Override
     public void onClick(View v) {
-        mDrawerLayout.closeDrawers();
-        if (v.getId() == R.id.open_recordings) {
+        if (v.getId() == R.id.open_recordings && !getCurrentFragment().getClass().equals(RecordingListFragment.class)) {
             launchFragment(new RecordingListFragment());
         }
+        mDrawerLayout.closeDrawers();
     }
 
 

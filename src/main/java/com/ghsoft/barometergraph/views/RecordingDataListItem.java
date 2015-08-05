@@ -3,6 +3,7 @@ package com.ghsoft.barometergraph.views;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -11,11 +12,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ghsoft.barometergraph.R;
 import com.ghsoft.barometergraph.data.CSVFileNameSanitizer;
 import com.ghsoft.barometergraph.data.FileMan;
 import com.ghsoft.barometergraph.data.RecordingData;
+import com.ghsoft.barometergraph.intents.CSVIntentHelper;
 
 /**
  * Created by brian on 8/2/15.
@@ -93,6 +96,11 @@ public class RecordingDataListItem extends LinearLayout implements View.OnClickL
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
+
+            case R.id.share_recording:
+                share();
+                return true;
+
             case R.id.rename_recording:
                 View v = mInflater.inflate(R.layout.dialog_rename_file, null);
                 final EditText fileName = (EditText) v.findViewById(R.id.file_name);
@@ -122,5 +130,13 @@ public class RecordingDataListItem extends LinearLayout implements View.OnClickL
                 dialog.dismiss();
             }
         }).show();
+    }
+
+    public void share() {
+        try {
+            mContext.startActivity(Intent.createChooser(CSVIntentHelper.get(mRecordingData.getFile()), "Send " + mRecordingData.getFile().getName()));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(mContext, "You have no applications to recieve the file", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -42,14 +42,28 @@
                 android:elevation="20dp"
                 android:layout_height="match_parent"
                 android:background="@color/menuBackground"
+                android:clickable="true"
                 android:orientation="vertical"
                 >
-                <Button
+                <TextView
                     android:id="@+id/open_recordings"
-                    style="?android:attr/borderlessButtonStyle"
+                    android:background="?attr/selectableItemBackground"
+                    android:textSize="11pt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="open recordings"/>
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:text="My Recordings"/>
+
+                <TextView
+                    android:id="@+id/about"
+                    android:background="?attr/selectableItemBackground"
+                    android:textSize="11pt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:clickable="true"
+                    android:text="About"/>
             </LinearLayout>
         </android.support.v4.widget.DrawerLayout>
     </LinearLayout>

@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,6 +16,7 @@ import android.widget.Toast;
 
 import com.ghsoft.barometergraph.R;
 import com.ghsoft.barometergraph.data.RecordingData;
+import com.ghsoft.barometergraph.intents.CSVIntentHelper;
 import com.ghsoft.barometergraph.views.BarometerDataGraph;
 
 import java.io.IOException;
@@ -162,15 +162,10 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
     }
 
     public void sendFile() {
-        Intent i = new Intent();
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.setAction(Intent.ACTION_SEND);
-        i.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mData.getFile()));
-        i.setType("text/csv");
         try {
-            startActivity(Intent.createChooser(i, "Send " + mData.getFile().getName()));
+            startActivity(Intent.createChooser(CSVIntentHelper.get(mData.getFile()), "Send " + mData.getFile().getName()));
         } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(getActivity(), "There are no email applications installed.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "You have no applications to recieve the file", Toast.LENGTH_SHORT).show();
         }
     }
 }
