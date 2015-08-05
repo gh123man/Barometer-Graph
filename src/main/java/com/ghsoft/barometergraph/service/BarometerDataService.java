@@ -14,6 +14,7 @@ import com.ghsoft.barometergraph.data.BarometerDataPoint;
 import com.ghsoft.barometergraph.data.CSVWriter;
 import com.ghsoft.barometergraph.data.FileMan;
 import com.ghsoft.barometergraph.data.IDataReceiver;
+import com.ghsoft.barometergraph.data.ISettingsProvider;
 import com.ghsoft.barometergraph.data.RunningAverage;
 import com.ghsoft.barometergraph.data.TransformHelper;
 import com.ghsoft.barometergraph.views.BarometerDataGraph;
@@ -39,7 +40,7 @@ public class BarometerDataService extends Service implements SensorEventListener
     private CSVWriter mWriter;
     private File mFile;
     private boolean mRecording;
-
+    private ISettingsProvider mSettings;
 
     @Override
     public void onCreate() {
@@ -49,11 +50,15 @@ public class BarometerDataService extends Service implements SensorEventListener
         mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
         mFileMan = new FileMan();
         mBuffer = new LinkedList<>();
-        mAverager = new RunningAverage(10);
-        mTransform = TransformHelper.TO_PSI;
         mWriter = new CSVWriter();
         mFile = null;
         mRecording = false;
+    }
+
+    public void setSettings(ISettingsProvider settings) {
+        mSettings = settings;
+        mAverager = new RunningAverage(mSettings.getAverageSize());
+        mTransform = TransformHelper.fromUnit(mSettings.getUnit());
     }
 
     public void setDataReceiver(IDataReceiver receiver) {
@@ -126,6 +131,7 @@ public class BarometerDataService extends Service implements SensorEventListener
 
     public void setRunningAverageSize(int size) {
         if (mRecording) return;
+        mSettings.setAverageSize(size);
         mAverager.setSize(size);
     }
 
@@ -134,6 +140,7 @@ public class BarometerDataService extends Service implements SensorEventListener
     }
 
     public void setTransformFunction(BarometerDataGraph.TransformFunction transform) {
+        mSettings.setUnit(transform.getUnit());
         mTransform = transform;
     }
 

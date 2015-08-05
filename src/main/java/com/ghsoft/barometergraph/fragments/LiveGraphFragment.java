@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.ghsoft.barometergraph.R;
 import com.ghsoft.barometergraph.data.CSVFileNameSanitizer;
+import com.ghsoft.barometergraph.data.ISettingsProvider;
 import com.ghsoft.barometergraph.data.TransformHelper;
 import com.ghsoft.barometergraph.service.BarometerDataService;
 import com.ghsoft.barometergraph.views.BarometerDataGraph;
@@ -40,7 +41,6 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
 
     private BarometerDataService mService;
     private LayoutInflater mInflater;
-    private LiveGraphFragmentEvents mEvents;
     private FrameLayout mChartContainer;
     private BarometerDataGraph mChart;
     private CheckBox mAutoScroll;
@@ -48,18 +48,16 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     private DataOptions mDataOptions;
     private DataRecording mDataRecording;
     private Context mContext;
+    private ISettingsProvider mSettings;
 
     public LiveGraphFragment() {
-    }
-
-    public interface LiveGraphFragmentEvents {
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mEvents = (LiveGraphFragmentEvents) activity;
+
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()  + " must implement LiveGraphFragmentEvents");
         }

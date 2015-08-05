@@ -21,7 +21,7 @@ import com.ghsoft.barometergraph.views.IRecordingDataEvents;
 
 
 public class Main extends ActionBarActivity implements BarometerServiceConnection.BarometerServiceEvents,
-        LiveGraphFragment.LiveGraphFragmentEvents, View.OnClickListener, FragmentManager.OnBackStackChangedListener,
+        View.OnClickListener, FragmentManager.OnBackStackChangedListener,
         IRecordingDataEvents, RecordedDataViewFragment.RecordedDataFragmentEvents {
 
     public static final String FRAGMENT_ID = "mContent";
@@ -30,6 +30,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
     private BarometerServiceConnection mServiceConnection;
     private FragmentManager mFragmentManager;
     private Intent mServiceIntent;
+    private Settings mSettings;
     DrawerLayout mDrawerLayout;
 
     @Override
@@ -38,8 +39,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         setContentView(R.layout.activity_main);
         setUpToolbar();
 
-        //mFragStack = new Stack<Fragment>();
-
+        mSettings = new Settings(this);
         mFragmentManager = getFragmentManager();
         mFragmentManager.addOnBackStackChangedListener(this);
         mServiceConnection = new BarometerServiceConnection(this);
@@ -74,6 +74,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
     @Override
     public void onServiceConnect(BarometerDataService service) {
         mService = service;
+        mService.setSettings(mSettings);
         if (getCurrentFragment() instanceof LiveGraphFragment) {
             ((LiveGraphFragment) getCurrentFragment()).setService(mService);
         }
@@ -187,4 +188,5 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         mFragmentManager.popBackStack();
 
     }
+
 }
