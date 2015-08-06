@@ -105,7 +105,7 @@ public class RecordingDataListItem extends LinearLayout implements View.OnClickL
                 View v = mInflater.inflate(R.layout.dialog_rename_file, null);
                 final EditText fileName = (EditText) v.findViewById(R.id.file_name);
                 fileName.setText(mRecordingData.getName());
-                DialogHelper.showEditDialog(mContext, v, this);
+                DialogHelper.showEditDialog(mContext, v, this, true);
                 return true;
 
             case R.id.delete_recording:

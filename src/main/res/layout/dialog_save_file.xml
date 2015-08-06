@@ -11,7 +11,7 @@
         android:gravity="center_horizontal"
         android:textSize="12pt"
         android:padding="10dp"
-        android:text="@string/rename_recording"/>
+        android:text="@string/save_recording"/>
     <EditText
         android:id="@+id/file_name"
         android:selectAllOnFocus="true"

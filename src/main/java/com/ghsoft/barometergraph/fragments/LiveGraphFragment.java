@@ -199,7 +199,7 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     }
 
     public void showRenameDialog(String oldname) {
-        View v = mInflater.inflate(R.layout.dialog_rename_file, null);
+        View v = mInflater.inflate(R.layout.dialog_save_file, null);
 
         final EditText fileName = (EditText) v.findViewById(R.id.file_name);
 
@@ -215,7 +215,7 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
                 mService.finalizeRecording(CSVFileNameSanitizer.sanitize(fileName.getText().toString()));
                 dialog.dismiss();
             }
-        });
+        }, false);
     }
 
     @Override

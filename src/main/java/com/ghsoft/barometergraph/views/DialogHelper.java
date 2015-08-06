@@ -11,10 +11,10 @@ import android.view.WindowManager;
  */
 public class DialogHelper {
 
-    public static void showEditDialog(Context context, View v, DialogInterface.OnClickListener callback) {
+    public static void showEditDialog(Context context, View v, DialogInterface.OnClickListener callback, boolean cancelable) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setView(v);
-        alertDialogBuilder.setCancelable(false).setPositiveButton("OK", callback);
+        alertDialogBuilder.setCancelable(cancelable).setPositiveButton("OK", callback);
         AlertDialog dialog;
         dialog = alertDialogBuilder.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
