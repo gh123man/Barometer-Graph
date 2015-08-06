@@ -97,7 +97,7 @@ public class BarometerDataService extends Service implements SensorEventListener
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (!hasSensor()) return;
+        if (!hasSensor() && mAverager != null) return;
         mAverager.put(event.values[0]);
         BarometerDataPoint point = new BarometerDataPoint(getCorrectValue(mAverager.get()), System.currentTimeMillis());
         mBuffer.add(point);
