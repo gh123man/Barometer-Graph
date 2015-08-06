@@ -84,7 +84,6 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
             }
         } else {
             mFragmentManager.popBackStackImmediate();
-            getSupportActionBar().setElevation(0f);
             launchFragment(new NoSensorFragment());
         }
     }
@@ -195,6 +194,11 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
             getSupportActionBar().setElevation(0f);
             getSupportActionBar().setTitle(getResources().getString(R.string.about));
         }
+
+        if (getCurrentFragment() instanceof NoSensorFragment) {
+            getSupportActionBar().setElevation(0f);
+        }
+
     }
 
     @Override
