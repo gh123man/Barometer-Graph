@@ -8,10 +8,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.ghsoft.barometergraph.data.RecordingData;
+import com.ghsoft.barometergraph.fragments.AboutFragment;
 import com.ghsoft.barometergraph.fragments.LiveGraphFragment;
 import com.ghsoft.barometergraph.fragments.NoSensorFragment;
 import com.ghsoft.barometergraph.fragments.RecordedDataViewFragment;
@@ -47,12 +47,14 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         mServiceIntent = new Intent(this, BarometerDataService.class);
         startService(mServiceIntent);
         bindService(mServiceIntent, mServiceConnection, 0);
-        Log.e("BINDING", "BINDING");
 
         findViewById(R.id.open_recordings).setOnClickListener(this);
+        findViewById(R.id.open_about).setOnClickListener(this);
 
         if (savedInstanceState == null) {
             goToMainFragment();
+        } else {
+            refreshState();
         }
     }
 
@@ -141,6 +143,9 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         if (v.getId() == R.id.open_recordings && !getCurrentFragment().getClass().equals(RecordingListFragment.class)) {
             launchFragment(new RecordingListFragment());
         }
+        if (v.getId() == R.id.open_about && !getCurrentFragment().getClass().equals(AboutFragment.class)) {
+            launchFragment(new AboutFragment());
+        }
         mDrawerLayout.closeDrawers();
     }
 
@@ -163,19 +168,32 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
 
     @Override
     public void onBackStackChanged() {
+        refreshState();
+        if (getCurrentFragment() instanceof RecordingListFragment) {
+            ((RecordingListFragment) getCurrentFragment()).referesh();
+        }
+    }
 
+    public void refreshState() {
         if (getCurrentFragment() instanceof LiveGraphFragment && mService != null) {
             ((LiveGraphFragment) getCurrentFragment()).setService(mService);
+            getSupportActionBar().setElevation(getResources().getDimension(R.dimen.bar_elivation));
             getSupportActionBar().setTitle("Barometer Graph");
         }
 
         if (getCurrentFragment() instanceof RecordingListFragment) {
-            ((RecordingListFragment) getCurrentFragment()).referesh();
+            getSupportActionBar().setElevation(getResources().getDimension(R.dimen.bar_elivation));
             getSupportActionBar().setTitle("Recorded Data");
         }
 
         if (getCurrentFragment() instanceof RecordedDataViewFragment) {
             getSupportActionBar().setTitle(((RecordedDataViewFragment) getCurrentFragment()).getFileName());
+            getSupportActionBar().setElevation(getResources().getDimension(R.dimen.bar_elivation));
+        }
+
+        if (getCurrentFragment() instanceof AboutFragment) {
+            getSupportActionBar().setElevation(0f);
+            getSupportActionBar().setTitle(getResources().getString(R.string.about));
         }
     }
 

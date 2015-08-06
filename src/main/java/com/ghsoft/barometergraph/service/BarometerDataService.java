@@ -8,7 +8,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.ghsoft.barometergraph.data.BarometerDataPoint;
 import com.ghsoft.barometergraph.data.CSVWriter;
@@ -103,7 +102,6 @@ public class BarometerDataService extends Service implements SensorEventListener
         BarometerDataPoint point = new BarometerDataPoint(getCorrectValue(mAverager.get()), System.currentTimeMillis());
         mBuffer.add(point);
         if (mDataReceiver != null) {
-            //Log.e(System.identityHashCode(this) + " ", "" + mBuffer.size());
             mDataReceiver.write(point);
         }
 
@@ -191,7 +189,6 @@ public class BarometerDataService extends Service implements SensorEventListener
 
     public void finalizeRecording(String newFileName) {
         mFileMan.rename(newFileName, mFile);
-        Log.e("moving " + newFileName, "moving" + mFile.getName());
         mFile = null;
     }
 

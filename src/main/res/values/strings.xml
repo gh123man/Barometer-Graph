@@ -10,9 +10,11 @@
     <string name="no">No</string>
     <string name="save_recording">Save this recording</string>
     <string name="rename_recording">Rename this recording</string>
+    <string name="about">About</string>
 
     <string name="reset_graph_warning">Changing the unit will reset the graph and clear its history. Are you sure?</string>
     <string name="clear_graph_warning">Clearing the graph cannot be undone, Are you sure?</string>
     <string name="are_you_sure">Are you sure?</string>
+    <string name="about_msg">Barometer graph displays, filters, records, and exports data captured by your devices barometer sensor. Feedback and comments are appreciated! </string>
 
 </resources>
