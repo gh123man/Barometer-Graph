@@ -30,7 +30,6 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
     private boolean mLockAutoScroll;
     private BarometerDataGraphCallbacks mCallbacks;
     private Context mContext;
-    private boolean mUseRecordingDataSet;
 
     public interface BarometerDataGraphCallbacks {
         void onAutoScrollChanged(boolean val);
@@ -46,7 +45,6 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
     public BarometerDataGraph(Context context, BarometerDataGraphCallbacks callbacks) {
         super(context);
         mCallbacks = callbacks;
-        mUseRecordingDataSet = false;
         setupView(context);
     }
 
@@ -74,6 +72,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         getAxisRight().setDrawLabels(false);
         getAxisLeft().setStartAtZero(false);
         setDrawGridBackground(false);
+        setDescription("");
         getAxisLeft().setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float v) {
@@ -105,10 +104,6 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
         if (mLockAutoScroll) {
             moveViewToX(data.getXValCount() - (VISIBLE_POINTS + 1));
         }
-    }
-
-    public void useRecordingDataSet(boolean val) {
-        mUseRecordingDataSet = val;
     }
 
     @Override

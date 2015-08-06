@@ -70,7 +70,7 @@ public class FileMan {
             File tmp = File.createTempFile(ROOT_DIR, CSV, dir);
             return tmp;
         } catch (IOException e) {
-            //fail
+            e.printStackTrace();
         }
         return null;
 

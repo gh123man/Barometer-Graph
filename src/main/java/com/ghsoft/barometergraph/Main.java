@@ -25,7 +25,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         View.OnClickListener, FragmentManager.OnBackStackChangedListener,
         IRecordingDataEvents, RecordedDataViewFragment.RecordedDataFragmentEvents {
 
-    public static final String FRAGMENT_ID = "mContent";
+    public static final String ELEVATION_KEY = "elevation";
 
     private BarometerDataService mService;
     private BarometerServiceConnection mServiceConnection;
@@ -54,7 +54,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
         if (savedInstanceState == null) {
             goToMainFragment();
         } else {
-            refreshState();
+            getSupportActionBar().setElevation(savedInstanceState.getFloat(ELEVATION_KEY));
         }
     }
 
@@ -66,6 +66,7 @@ public class Main extends ActionBarActivity implements BarometerServiceConnectio
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mFragmentManager.putFragment(outState, Integer.toString(getFragmentCount() - 1), getCurrentFragment());
+        outState.putFloat(ELEVATION_KEY, getSupportActionBar().getElevation());
     }
 
     @Override

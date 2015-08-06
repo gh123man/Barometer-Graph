@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +58,11 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mData = (RecordingData) getArguments().getSerializable(PACKAGE_DATA_KEY);
+        if (savedInstanceState == null) {
+            mData = (RecordingData) getArguments().getSerializable(PACKAGE_DATA_KEY);
+        } else {
+            mData = (RecordingData) savedInstanceState.getSerializable(PACKAGE_DATA_KEY);
+        }
 
         mContext = getActivity();
         mInflater = inflater;
@@ -78,6 +83,8 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(PACKAGE_DATA_KEY, mData);
+        Log.e("here", "here");
         super.onSaveInstanceState(outState);
     }
 
@@ -165,7 +172,7 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
         try {
             startActivity(Intent.createChooser(CSVIntentHelper.get(mData.getFile()), "Send " + mData.getFile().getName()));
         } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(getActivity(), "You have no applications to recieve the file", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "You have no applications to receive the file", Toast.LENGTH_SHORT).show();
         }
     }
 }

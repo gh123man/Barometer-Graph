@@ -170,12 +170,10 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     @Override
     public boolean onRecordRequest(boolean keepBuffer) {
         if (mService.isRecording()) {
-            mChart.useRecordingDataSet(false);
             showRenameDialog(mService.stopRecording());
             mDataOptions.setDataOptionsEnabled(true);
             return false;
         } else {
-            mChart.useRecordingDataSet(true);
             mService.startRecording(keepBuffer);
             mDataOptions.setDataOptionsEnabled(false);
             return true;
