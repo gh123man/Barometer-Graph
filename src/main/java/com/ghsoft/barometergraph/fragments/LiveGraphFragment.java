@@ -38,6 +38,8 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
     private static final String SAVE_EXPAND_RECORDING = "mDataRecording";
     private static final String SAVE_EXPAND_DATA_OPTIONS = "mDataOptions";
     private static final String FLOAT_FORMAT = "%.4f";
+    private static final String RECORDING_ = "Recording_";
+    private static final String DATE_FORMAT = "dd-MM-yyyy_HH:mm:ss";
 
     private BarometerDataService mService;
     private LayoutInflater mInflater;
@@ -201,10 +203,10 @@ public class LiveGraphFragment extends Fragment implements BarometerDataGraph.Ba
 
         final EditText fileName = (EditText) v.findViewById(R.id.file_name);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         String tempName = sdf.format(new Date());
 
-        fileName.setText("Recording_" + tempName);
+        fileName.setText(RECORDING_ + tempName);
 
         ((InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(fileName, InputMethodManager.SHOW_FORCED);
 

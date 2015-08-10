@@ -134,9 +134,9 @@ public class RecordingDataListItem extends LinearLayout implements View.OnClickL
 
     public void share() {
         try {
-            mContext.startActivity(Intent.createChooser(CSVIntentHelper.get(mRecordingData.getFile()), "Send " + mRecordingData.getFile().getName()));
+            mContext.startActivity(Intent.createChooser(CSVIntentHelper.get(mRecordingData.getFile()), getResources().getString(R.string.send) + " " + mRecordingData.getFile().getName()));
         } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(mContext, "You have no applications to recieve the file", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, getResources().getString(R.string.no_file_permission), Toast.LENGTH_SHORT).show();
         }
     }
 }

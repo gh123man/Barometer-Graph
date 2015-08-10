@@ -5,8 +5,10 @@ package com.ghsoft.barometergraph.data;
  */
 public class CSVFileNameSanitizer {
 
+    private static final String CSV = ".csv";
+
     public static String sanitize(String name) {
         name = name.replaceAll("/", "_").replaceAll("\0", " ");
-        return name + ".csv";
+        return name + CSV;
     }
 }

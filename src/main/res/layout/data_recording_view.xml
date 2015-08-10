@@ -19,25 +19,25 @@
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
-                android:text="Stop Recording"/>
+                android:text="@string/stop_recording"/>
 
             <Button
                 android:id="@+id/record_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Start Recording"/>
+                android:text="@string/start_recording"/>
 
             <Button
                 android:id="@+id/save_history_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Save Histroy"/>
+                android:text="@string/save_history"/>
 
             <Button
                 android:id="@+id/save_record_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Save Histroy + Record"/>
+                android:text="@string/save_and_record"/>
 
         </LinearLayout>
 

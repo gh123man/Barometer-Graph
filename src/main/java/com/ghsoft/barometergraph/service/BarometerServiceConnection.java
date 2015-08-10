@@ -13,15 +13,14 @@ public class BarometerServiceConnection implements ServiceConnection {
     private boolean mBound;
 
     public interface BarometerServiceEvents {
-        public void onServiceConnect(BarometerDataService service);
-        public void onServiceDisconnect();
+        void onServiceConnect(BarometerDataService service);
+        void onServiceDisconnect();
     }
 
     public BarometerServiceConnection(BarometerServiceEvents events) {
         mEvents = events;
         mBound = false;
     }
-
 
     public void onServiceConnected(ComponentName className, IBinder service) {
 
@@ -36,7 +35,6 @@ public class BarometerServiceConnection implements ServiceConnection {
             mEvents.onServiceDisconnect();
         }
     }
-
     public boolean isBound() {
         return mBound;
     }

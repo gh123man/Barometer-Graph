@@ -60,11 +60,11 @@ public class DataOptions extends LinearLayout implements NumberPicker.OnValueCha
         mRootView = (LinearLayout) mInflater.inflate(R.layout.data_options_view, this);
 
         mExpander= (ExpanderView)  mRootView.findViewById(R.id.expander);
-        mExpander.setExpandtext("Data Options");
+        mExpander.setExpandtext(getResources().getString(R.string.data_options));
 
         mUnits = (Spinner) mRootView.findViewById(R.id.unit_picker);
         mUnits.setOnItemSelectedListener(this);
-        mUnits.setAdapter(new ArrayAdapter<String>(mContext, android.R.layout.simple_list_item_1, TransformHelper.UNITS));
+        mUnits.setAdapter(new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, TransformHelper.UNITS));
 
         mClearButton = (Button) mRootView.findViewById(R.id.clear_button);
         mClearButton.setOnClickListener(this);

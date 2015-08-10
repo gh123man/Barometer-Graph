@@ -180,7 +180,6 @@ public class TransformHelper {
             units.add(key);
         }
         UNITS = units.toArray(new String[units.size()]);
-
     }
 
     public static BarometerDataGraph.TransformFunction fromUnit(String unit) {

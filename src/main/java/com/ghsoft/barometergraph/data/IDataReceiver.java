@@ -7,7 +7,7 @@ import java.util.LinkedList;
  */
 public interface IDataReceiver {
 
-    public void writeHistory(LinkedList<BarometerDataPoint> data);
+    void writeHistory(LinkedList<BarometerDataPoint> data);
 
-    public void write(BarometerDataPoint dataPoint);
+    void write(BarometerDataPoint dataPoint);
 }

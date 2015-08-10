@@ -27,7 +27,7 @@
                 android:layout_gravity="center"
                 android:textSize="25pt"
                 android:textColor="@android:color/white"
-                android:text="Sorry :("/>
+                android:text="@string/sorry"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
                 android:gravity="center"
                 android:textSize="13pt"
                 android:textColor="@android:color/white"
-                android:text="Your device does not have a barometer sensor"/>
+                android:text="@string/no_sensor_message"/>
         </LinearLayout>
     </ScrollView>
 

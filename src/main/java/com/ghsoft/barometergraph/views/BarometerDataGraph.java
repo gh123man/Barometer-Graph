@@ -26,6 +26,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
 
     private static final String FLOAT_FORMAT = "%.3f";
     private static final int VISIBLE_POINTS = 200;
+    private static final String TIMESTAMP_FORMAT = "HH:mm:ss";
 
     private boolean mLockAutoScroll;
     private BarometerDataGraphCallbacks mCallbacks;
@@ -151,7 +152,7 @@ public class BarometerDataGraph extends LineChart implements IDataReceiver {
     }
 
     private static String formatTime(long timestamp) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_FORMAT);
         return sdf.format(new Date(timestamp));
     }
 

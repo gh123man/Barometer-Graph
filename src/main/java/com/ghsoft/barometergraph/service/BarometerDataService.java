@@ -84,7 +84,7 @@ public class BarometerDataService extends Service implements SensorEventListener
         if (mRecording) {
             mWriter.finish();
         }
-        mFileMan.clearTmp();
+        FileMan.clearTmp();
     }
 
     @Override

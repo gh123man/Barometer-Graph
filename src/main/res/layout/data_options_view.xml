@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical" >
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical" >
 
     <com.ghsoft.barometergraph.views.ExpanderView
         android:id="@+id/expander"
@@ -17,7 +17,7 @@
             android:padding="3dp"
             android:visibility="gone"
             android:textColor="@color/red"
-            android:text="Some settings are disabled while recording"/>
+            android:text="@string/settings_disabled"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,7 +25,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
@@ -37,7 +37,7 @@
                     android:textSize="20dp"
                     android:padding="5dp"
                     android:textStyle="bold"
-                    android:text="Data Unit"/>
+                    android:text="@string/data_unit"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -45,13 +45,13 @@
                     android:textSize="15dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="20dp"
-                    android:text="Unit of measurement"/>
+                    android:text="@string/unit_of_measurement"/>
             </LinearLayout>
 
             <Spinner
                 android:layout_width="wrap_content"
                 android:id="@+id/unit_picker"
-                android:layout_height="match_parent"></Spinner>
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
 
@@ -62,7 +62,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
@@ -73,7 +73,7 @@
                     android:textSize="20dp"
                     android:padding="5dp"
                     android:textStyle="bold"
-                    android:text="Running Average"
+                    android:text="@string/running_average"
                     android:id="@+id/textView"/>
 
                 <TextView
@@ -82,7 +82,7 @@
                     android:textSize="15dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="20dp"
-                    android:text="This value determines the running average size. 1 is raw sensor data."
+                    android:text="@string/running_average_info"
                     android:layout_below="@id/textView"
                     android:id="@+id/textView1"/>
             </LinearLayout>
@@ -91,7 +91,7 @@
                 android:id="@+id/picker"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"></NumberPicker>
+                android:layout_alignParentEnd="true"/>
 
         </LinearLayout>
 
@@ -102,7 +102,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
@@ -113,7 +113,7 @@
                     android:textSize="20dp"
                     android:padding="5dp"
                     android:textStyle="bold"
-                    android:text="Graph Auto Scale"
+                    android:text="@string/graph_auto_scale"
                     android:id="@+id/textView2"/>
 
                 <TextView
@@ -122,7 +122,7 @@
                     android:textSize="15dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="20dp"
-                    android:text="Graph will auto scale to data when enabled."
+                    android:text="@string/graph_auto_scale_description"
                     android:layout_below="@id/textView"
                     android:id="@+id/textView3"/>
             </LinearLayout>
@@ -146,7 +146,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
@@ -157,7 +157,7 @@
                     android:textSize="20dp"
                     android:padding="5dp"
                     android:textStyle="bold"
-                    android:text="Clear Data History"/>
+                    android:text="@string/clear_history"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -165,7 +165,7 @@
                     android:textSize="15dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="20dp"
-                    android:text="Clears the current graph data."
+                    android:text="@string/clear_history_description"
                     android:layout_below="@id/textView"/>
             </LinearLayout>
             <FrameLayout
@@ -173,7 +173,7 @@
                 android:layout_height="match_parent">
                 <Button
                     android:layout_gravity="center"
-                    android:text="Clear"
+                    android:text="@string/clear"
                     android:id="@+id/clear_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
@@ -181,8 +181,5 @@
 
         </LinearLayout>
 
-
     </com.ghsoft.barometergraph.views.ExpanderView>
-
-
 </LinearLayout>

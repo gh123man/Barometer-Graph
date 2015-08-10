@@ -170,9 +170,9 @@ public class RecordedDataViewFragment extends Fragment implements BarometerDataG
 
     public void sendFile() {
         try {
-            startActivity(Intent.createChooser(CSVIntentHelper.get(mData.getFile()), "Send " + mData.getFile().getName()));
+            startActivity(Intent.createChooser(CSVIntentHelper.get(mData.getFile()), getResources().getString(R.string.send) + " " + mData.getFile().getName()));
         } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(getActivity(), "You have no applications to receive the file", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getResources().getString(R.string.no_file_permission), Toast.LENGTH_SHORT).show();
         }
     }
 }

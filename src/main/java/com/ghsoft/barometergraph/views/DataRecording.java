@@ -47,7 +47,7 @@ public class DataRecording extends LinearLayout implements View.OnClickListener 
         mRootView = (LinearLayout) mInflater.inflate(R.layout.data_recording_view, this);
 
         mExpander = (ExpanderView) mRootView.findViewById(R.id.recording_expander);
-        mExpander.setExpandtext("Recording");
+        mExpander.setExpandtext(getResources().getString(R.string.recording));
 
         mRecordButton = (Button) mRootView.findViewById(R.id.record_button);
         mRecordButton.setOnClickListener(this);
